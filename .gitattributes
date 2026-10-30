@@ -1,0 +1,7 @@
+# Archivos que Git nunca debe tratar como texto (no cambiar saltos de línea)
+*.pdf  binary
+*.xlsx binary
+*.pbix binary
+*.png  binary
+*.jpg  binary
+*.ico  binary

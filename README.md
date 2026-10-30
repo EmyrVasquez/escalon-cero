@@ -25,12 +25,12 @@ Escalón Cero reúne casos reales y anonimizados de trabajos junior. Cada caso c
 
 ## Cómo funciona
 
-1. **Lees el caso:** contexto, encargo y la complicación que no estaba en el enunciado.
-2. **Decides:** escribes qué harías tú.
-3. **Descubres:** recién entonces ves qué hizo el junior, qué pasó y lo que la universidad no le enseñó.
-4. **Reaccionas:** marcas si te sirvió o si a ti te pasó algo parecido.
+1. **Explora el encargo:** contexto, lo que te pidieron, la complicación que nadie anticipó y los recursos para trabajar (por ejemplo, una base de datos ficticia).
+2. **Entrega tu solución:** haces el trabajo con las herramientas del puesto (Power BI, Excel, un ambiente de pruebas…) y explicas tus decisiones.
+3. **Descubre qué pasó:** recién entonces ves qué hizo el junior, cómo terminó y lo que la universidad no le enseñó.
+4. **Muéstralo:** revisas tu entrega con criterios claros y la guardas en tu portafolio, listo para exportar en PDF.
 
-Predecir antes de ver el desenlace hace visible el razonamiento, el principio del *aprendizaje cognitivo* (Collins, Brown y Holum, 1991).
+Decidir antes de ver el desenlace hace visible el razonamiento, el principio del *aprendizaje cognitivo* (Collins, Brown y Holum, 1991).
 
 ## Confianza en los casos
 
@@ -43,9 +43,11 @@ Predecir antes de ver el desenlace hace visible el razonamiento, el principio de
 
 Cada autor se verifica de forma privada antes de publicar, y todo caso pasa por moderación.
 
-## Carreras del primer lote
+## Áreas del primer lote
 
-Ingeniería Informática y Software · Contabilidad y Administración · Marketing y Publicidad · Diseño Gráfico · Casos transversales para todas las carreras.
+Ingeniería de software, análisis de datos, sistemas empresariales (ERP), marketing digital y diseño, con contabilidad y finanzas, administración y comunicación audiovisual como siguientes áreas.
+
+El catálogo se explora como en una plataforma de cursos: desde el menú **Explorar** por área, rol o herramienta, y en `/explorar` con filtros por área, rol, nivel, duración y herramienta.
 
 ## Stack
 
@@ -59,13 +61,21 @@ Ingeniería Informática y Software · Contabilidad y Administración · Marketi
 
 ```
 src/
-  app/            Rutas de la aplicación
+  app/                      Rutas: portada, explorar, práctica, mi práctica y portafolio
+  components/               Componentes de interfaz
   lib/
-    supabase.ts   Cliente de Supabase
-    carreras.ts   Carreras disponibles
-    tipos.ts      Tipos de datos y etiquetas
+    supabase.ts             Cliente de Supabase
+    practicas.ts            Lecturas de prácticas en el servidor
+    carreras.ts             Áreas y familias de áreas
+    menu.ts                 Datos del menú Explorar
+    texto.ts                Búsqueda sin tildes, duraciones y plurales
+    tipos.ts                Tipos de datos y etiquetas
+    almacenamiento.ts       Borradores y portafolio en el navegador
 supabase/
-  schema.sql      Tablas, políticas de seguridad y función publicar_caso
+  schema.sql                Tablas, políticas de seguridad y función publicar_caso
+  migracion-002-practicas.sql  Campos de práctica y prácticas de ejemplo
+  migracion-003-recursos.sql   Herramientas, requisitos, recursos y la práctica de Power BI
+public/recursos/            Archivos ficticios que se descargan desde las prácticas
 ```
 
 ## Desarrollo local
@@ -79,7 +89,7 @@ npm run dev
 ```
 
 Variables de entorno requeridas: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-El esquema de base de datos está en `supabase/schema.sql`.
+La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql` y `supabase/migracion-003-recursos.sql`.
 
 ## Equipo
 
