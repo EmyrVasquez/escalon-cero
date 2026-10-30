@@ -29,6 +29,10 @@ export interface PracticaResumen {
   validado_empresa: boolean;
   destacada: boolean;
   herramientas: string[];
+  /** Ruta a la que pertenece el proyecto (slug de `src/lib/rutas.ts`). */
+  ruta: string | null;
+  /** Etapa de la ruta, de 1 a 3. */
+  etapa: number | null;
 }
 
 /** Práctica completa, incluido el desenlace real. */
@@ -106,3 +110,77 @@ export const ETIQUETAS_REACCION: Record<TipoReaccion, string> = {
   me_paso_algo_parecido: "Me pasó algo parecido",
   no_suele_pasar: "No suele pasar así",
 };
+
+// -------------------------------------------------------------
+// Oportunidades (oferta) y postulaciones (demanda)
+// -------------------------------------------------------------
+
+export type TipoOportunidad = "experiencia_empresa" | "reto_con_premio";
+export type Modalidad = "remoto" | "presencial" | "hibrido";
+export type EstadoOportunidad = "borrador" | "abierta" | "cerrada";
+
+/** Datos de una oportunidad que se muestran en listas. */
+export interface OportunidadResumen {
+  id: string;
+  titulo: string;
+  empresa: string;
+  sector: string | null;
+  tipo: TipoOportunidad;
+  carrera: Area;
+  rol: string;
+  resumen: string | null;
+  compensacion: string;
+  modalidad: Modalidad;
+  ubicacion: string | null;
+  dedicacion: string | null;
+  cierra: string | null;
+  /** Ruta que hay que seguir para postular (slug de `src/lib/rutas.ts`). */
+  ruta: string | null;
+  /** Se piden los proyectos de la ruta desde la etapa 1 hasta esta. */
+  etapa_requerida: number;
+  es_ejemplo: boolean;
+  destacada: boolean;
+  estado: EstadoOportunidad;
+}
+
+export interface Oportunidad extends OportunidadResumen {
+  descripcion: string;
+  que_haras: string[];
+  requisitos: string[];
+  cupos: number;
+}
+
+/** Entrega de una práctica que se adjunta a una postulación. */
+export interface EntregaAdjunta {
+  practica_id: string;
+  titulo: string;
+  enlace: string | null;
+  solucion: string;
+}
+
+export const ETIQUETAS_TIPO_OPORTUNIDAD: Record<TipoOportunidad, string> = {
+  experiencia_empresa: "Experiencia con empresa",
+  reto_con_premio: "Reto con premio",
+};
+
+export const DESCRIPCION_TIPO_OPORTUNIDAD: Record<TipoOportunidad, string> = {
+  experiencia_empresa:
+    "Un encargo real, sin pago: a cambio recibes una constancia, una carta de recomendación y un caso para tu portafolio.",
+  reto_con_premio: "Varias personas lo intentan y la empresa paga a quienes logran el resultado.",
+};
+
+/** Cómo se llama lo que se obtiene, según el tipo. */
+export const ETIQUETAS_RETRIBUCION: Record<TipoOportunidad, string> = {
+  experiencia_empresa: "Lo que obtienes",
+  reto_con_premio: "Premio",
+};
+
+export const ETIQUETAS_MODALIDAD: Record<Modalidad, string> = {
+  remoto: "Remoto",
+  presencial: "Presencial",
+  hibrido: "Híbrido",
+};
+
+export const ETIQUETA_OPORTUNIDAD_EJEMPLO = "Oportunidad de ejemplo";
+export const DESCRIPCION_OPORTUNIDAD_EJEMPLO =
+  "Empresa ficticia, creada para mostrar cómo funcionará la plataforma.";

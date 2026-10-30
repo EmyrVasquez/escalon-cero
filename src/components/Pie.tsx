@@ -12,8 +12,9 @@ export function Pie() {
           </p>
         </div>
         <p className="max-w-sm leading-relaxed">
-          Cada práctica indica si es un caso real anonimizado, basado en hechos
-          reales o un ejemplo ilustrativo.
+          Cada proyecto indica si es un caso real anonimizado, basado en hechos
+          reales o un ejemplo ilustrativo. Las oportunidades con empresas ficticias
+          se marcan como de ejemplo.
         </p>
       </div>
     </footer>

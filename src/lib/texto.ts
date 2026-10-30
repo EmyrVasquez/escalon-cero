@@ -41,7 +41,20 @@ export function minutosMaximos(duracion: string | null): number {
   return numeros?.length ? Math.max(...numeros) : Number.POSITIVE_INFINITY;
 }
 
-/** «1 práctica», «3 prácticas». */
+/** «1 proyecto», «3 proyectos». */
 export function plural(n: number, singular: string, varias: string): string {
   return `${n} ${n === 1 ? singular : varias}`;
+}
+
+const MESES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+/** «2026-11-20» → «20 de noviembre». Sin zona horaria, para no correr el día. */
+export function fechaLarga(iso: string | null): string | null {
+  const partes = iso?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!partes) return null;
+  const mes = MESES[Number(partes[2]) - 1];
+  return mes ? `${Number(partes[3])} de ${mes}` : null;
 }

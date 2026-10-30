@@ -28,11 +28,11 @@ function ordenarPorConteo(conteo: Map<string, number>, parametro: string): Enlac
     .map(([etiqueta, n]) => ({
       etiqueta,
       conteo: n,
-      href: `/explorar?${parametro}=${encodeURIComponent(etiqueta)}`,
+      href: `/proyectos?${parametro}=${encodeURIComponent(etiqueta)}`,
     }));
 }
 
-/** Arma el menú Explorar del encabezado a partir de las prácticas publicadas. */
+/** Arma el menú Explorar del encabezado a partir de los proyectos publicados. */
 export function armarMenu(practicas: PracticaResumen[]): DatosMenu {
   const porArea = contar(practicas.map((p) => p.carrera));
 
@@ -45,7 +45,7 @@ export function armarMenu(practicas: PracticaResumen[]): DatosMenu {
         .map((a) => ({
           etiqueta: a.etiqueta,
           conteo: porArea.get(a.valor) ?? 0,
-          href: `/explorar?area=${a.valor}`,
+          href: `/proyectos?area=${a.valor}`,
         })),
       enCamino: [
         ...areas.filter((a) => !porArea.get(a.valor)).map((a) => a.etiqueta),

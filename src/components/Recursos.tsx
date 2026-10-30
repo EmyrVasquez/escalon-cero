@@ -6,7 +6,7 @@ function extension(nombre: string): string {
   return partes.length > 1 ? partes.at(-1)!.toUpperCase().slice(0, 4) : "ARCH";
 }
 
-/** Archivos para descargar de una práctica. */
+/** Archivos para descargar de un proyecto. */
 export function Recursos({ recursos }: { recursos: Recurso[] }) {
   return (
     <section

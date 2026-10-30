@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Encabezado } from "@/components/Encabezado";
 import { Pie } from "@/components/Pie";
+import { ProveedorSesion } from "@/lib/sesion";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -11,11 +12,11 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Escalón Cero — Practica tu primer empleo antes de tenerlo",
+    default: "Escalón Cero — Gana experiencia antes de tu primer empleo",
     template: "%s · Escalón Cero",
   },
   description:
-    "Casos reales del primer año de trabajo: decide qué harías, descubre qué pasó de verdad y guarda tu entrega en tu portafolio.",
+    "Experiencia real con empresas para personas sin experiencia: sigue una ruta, haz los proyectos que piden y postula con tu portafolio.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,11 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#contenido" className="saltar">
           Saltar al contenido
         </a>
-        <Encabezado />
-        <main id="contenido" className="flex-1">
-          {children}
-        </main>
-        <Pie />
+        <ProveedorSesion>
+          <Encabezado />
+          <main id="contenido" className="flex-1">
+            {children}
+          </main>
+          <Pie />
+        </ProveedorSesion>
       </body>
     </html>
   );

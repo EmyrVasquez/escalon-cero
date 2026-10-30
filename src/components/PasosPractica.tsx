@@ -6,8 +6,8 @@ import { IconoCandado, IconoHecho } from "./Iconos";
 type Estado = "hecho" | "actual" | "pendiente" | "bloqueado";
 
 /**
- * Avance dentro de una práctica, como las unidades de un módulo.
- * Se calcula con lo guardado en el navegador: borrador y portafolio.
+ * Avance dentro de un proyecto, como las unidades de un módulo.
+ * Se calcula con el progreso de la cuenta: borrador y portafolio.
  */
 export function PasosPractica({
   practicaId,
@@ -48,7 +48,7 @@ export function PasosPractica({
     <section aria-labelledby="titulo-pasos" className="rounded-2xl border border-linea bg-blanco p-6">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="titulo-pasos" className="font-bold">
-          Pasos de la práctica
+          Pasos del proyecto
         </h2>
         <span className="text-sm text-pizarra">
           {hechos} de 4 completados

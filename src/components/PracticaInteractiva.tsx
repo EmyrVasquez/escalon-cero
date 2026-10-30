@@ -2,24 +2,32 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import {
-  actualizarCriterios,
-  eliminarBorrador,
-  guardarBorrador,
-  guardarEnPortafolio,
-} from "@/lib/almacenamiento";
-import { supabase } from "@/lib/supabase";
+import { useSesion } from "@/lib/sesion";
 import type { Practica } from "@/lib/tipos";
+import { AvisoSesion } from "./AvisoSesion";
 import { IconoDescarga } from "./Iconos";
-import { useBorradores, usePortafolio } from "@/lib/useAlmacenamiento";
 import { Reacciones } from "./Reacciones";
 
 const MINIMO = 10;
 const MAXIMO = 2000;
 
-export function PracticaInteractiva({ practica }: { practica: Practica }) {
-  const borradores = useBorradores();
-  const portafolio = usePortafolio();
+/** Oportunidad para la que cuenta este proyecto como requisito. */
+export interface PuertaAbierta {
+  id: string;
+  titulo: string;
+  empresa: string;
+  compensacion: string;
+}
+
+export function PracticaInteractiva({
+  practica,
+  oportunidades = [],
+}: {
+  practica: Practica;
+  oportunidades?: PuertaAbierta[];
+}) {
+  const { usuario, portafolio, borradores, entregar: guardarEntrega, guardarBorrador, actualizarCriterios } =
+    useSesion();
   const entrada = portafolio?.find((e) => e.practicaId === practica.id);
   const borrador = borradores?.[practica.id];
 
@@ -53,7 +61,6 @@ export function PracticaInteractiva({ practica }: { practica: Practica }) {
       area: practica.carrera,
       solucion: nuevaSolucion,
       enlace: nuevoEnlace,
-      actualizado: new Date().toISOString(),
     });
   }
 
@@ -81,39 +88,38 @@ export function PracticaInteractiva({ practica }: { practica: Practica }) {
 
     setError(null);
     setEnviando(true);
-    const { error: errorSupabase } = await supabase.from("respuestas").insert({
-      caso_id: practica.id,
-      respuesta: texto,
-      enlace: url || null,
-    });
-    setEnviando(false);
-
-    if (errorSupabase) {
-      setError(
-        "No pudimos registrar tu entrega. Revisa tu conexión a internet y vuelve a intentarlo.",
-      );
-      return;
-    }
-
     acabaDeEntregar.current = true;
-    guardarEnPortafolio({
+    const fallo = await guardarEntrega({
       practicaId: practica.id,
       titulo: practica.titulo,
       area: practica.carrera,
       rol: practica.rol,
       herramientas: practica.herramientas,
+      criterios: practica.criterios,
       solucion: texto,
       enlace: url,
-      criterios: practica.criterios,
-      criteriosCumplidos: [],
-      entregado: new Date().toISOString(),
     });
-    eliminarBorrador(practica.id);
+    setEnviando(false);
+    if (fallo) {
+      acabaDeEntregar.current = false;
+      setError(fallo);
+    }
   }
 
-  // Mientras se lee lo guardado en el navegador, se reserva el espacio.
+  // Mientras se lee el progreso de la cuenta, se reserva el espacio.
   if (portafolio === undefined) {
     return <div className="mt-14 h-72 rounded-3xl border border-linea bg-blanco" aria-hidden="true" />;
+  }
+
+  if (usuario === null) {
+    return (
+      <section id="entrega" className="mt-14 scroll-mt-6">
+        <AvisoSesion
+          titulo="Ingresa para entregar tu solución"
+          texto="Tu entrega se guarda en tu cuenta: forma tu portafolio, avanza tu ruta y cuenta como requisito para postular a oportunidades. Al entregar verás qué pasó de verdad."
+        />
+      </section>
+    );
   }
 
   if (!entrada) {
@@ -199,7 +205,7 @@ export function PracticaInteractiva({ practica }: { practica: Practica }) {
               ? "Haz el trabajo con los recursos y explica tus decisiones como si se lo enviaras a tu jefe. "
               : "Responde como si fuera tu primer mes en este puesto. "}
             Al entregar verás lo que hizo el junior real y cómo terminó. Tu borrador se
-            guarda en este navegador mientras escribes.
+            guarda en tu cuenta mientras escribes.
           </p>
 
           {conArchivo ? (
@@ -334,6 +340,37 @@ export function PracticaInteractiva({ practica }: { practica: Practica }) {
         </section>
       </div>
 
+      {oportunidades.length > 0 && (
+        <section className="rounded-3xl bg-tinta p-6 text-blanco sm:p-8">
+          <h3 className="text-xl font-bold tracking-[-0.02em] text-lima">
+            Esta entrega ya cuenta como requisito
+          </h3>
+          <p className="mt-1 max-w-[62ch] text-sm leading-relaxed opacity-85">
+            Puedes usarla para postular a {oportunidades.length === 1 ? "esta oportunidad" : "estas oportunidades"}.
+          </p>
+          <ul className="mt-5 space-y-3">
+            {oportunidades.map((o) => (
+              <li
+                key={o.id}
+                className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl bg-blanco/10 p-4 sm:px-5"
+              >
+                <div className="min-w-0 flex-[1_1_18rem]">
+                  <p className="text-xs font-semibold opacity-75">{o.empresa}</p>
+                  <p className="mt-0.5 font-bold leading-snug">{o.titulo}</p>
+                  <p className="mt-1 text-sm">{o.compensacion}</p>
+                </div>
+                <Link
+                  href={`/oportunidades/${o.id}#postular`}
+                  className="inline-flex items-center justify-center rounded-xl bg-lima px-5 py-3 font-bold text-tinta transition-colors hover:bg-blanco"
+                >
+                  Postular
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <Reacciones practicaId={practica.id} />
 
       <div className="flex flex-col gap-3 sm:flex-row">
@@ -344,10 +381,10 @@ export function PracticaInteractiva({ practica }: { practica: Practica }) {
           Ver mi portafolio
         </Link>
         <Link
-          href="/explorar"
+          href="/proyectos"
           className="inline-flex items-center justify-center rounded-xl border border-linea bg-blanco px-6 py-3.5 font-bold text-tinta transition-colors hover:border-tinta"
         >
-          Elegir otra práctica
+          Elegir otro proyecto
         </Link>
       </div>
     </section>

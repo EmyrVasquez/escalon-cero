@@ -1,9 +1,11 @@
 "use client";
 
 /**
- * Guardado local en el navegador. Sin cuentas: borradores y portafolio
- * viven en el dispositivo de la persona. Todo acceso tolera que el
- * almacenamiento no esté disponible (modo privado, bloqueo de cookies).
+ * Tipos del progreso del estudiante y lo poco que queda en el navegador.
+ * El progreso (entregas, borradores y postulaciones) vive en la cuenta: ver
+ * `src/lib/sesion.tsx`. Aquí solo quedan las reacciones propias y la lectura
+ * del progreso que se guardó en el navegador antes de existir las cuentas,
+ * para importarlo la primera vez que la persona inicia sesión.
  */
 
 export interface Borrador {
@@ -20,7 +22,6 @@ export interface EntradaPortafolio {
   titulo: string;
   area: string;
   rol: string;
-  /** Herramientas de la práctica; puede faltar en entregas antiguas. */
   herramientas?: string[];
   solucion: string;
   enlace: string;
@@ -29,9 +30,18 @@ export interface EntradaPortafolio {
   entregado: string;
 }
 
-export const EVENTO_CAMBIO = "escalon-cero:cambio";
-export const CLAVE_BORRADORES = "escalon-cero:borradores";
-export const CLAVE_PORTAFOLIO = "escalon-cero:portafolio";
+export interface PostulacionLocal {
+  oportunidadId: string;
+  titulo: string;
+  empresa: string;
+  tipo: string;
+  compensacion: string;
+  practicas: string[];
+  enviada: string;
+}
+
+const CLAVE_BORRADORES = "escalon-cero:borradores";
+const CLAVE_PORTAFOLIO = "escalon-cero:portafolio";
 const CLAVE_REACCIONES = "escalon-cero:reacciones";
 
 function leer<T>(clave: string, porDefecto: T): T {
@@ -46,49 +56,26 @@ function leer<T>(clave: string, porDefecto: T): T {
 function escribir(clave: string, valor: unknown): void {
   try {
     window.localStorage.setItem(clave, JSON.stringify(valor));
-    window.dispatchEvent(new Event(EVENTO_CAMBIO));
   } catch {
     // Sin almacenamiento disponible: la sesión sigue funcionando sin guardar.
   }
 }
 
-export function leerBorradores(): Record<string, Borrador> {
-  return leer<Record<string, Borrador>>(CLAVE_BORRADORES, {});
+/** Progreso guardado en el navegador antes de las cuentas, para importarlo. */
+export function leerProgresoLocal(): { portafolio: EntradaPortafolio[]; borradores: Borrador[] } {
+  return {
+    portafolio: leer<EntradaPortafolio[]>(CLAVE_PORTAFOLIO, []),
+    borradores: Object.values(leer<Record<string, Borrador>>(CLAVE_BORRADORES, {})),
+  };
 }
 
-export function guardarBorrador(borrador: Borrador): void {
-  const todos = leerBorradores();
-  todos[borrador.practicaId] = borrador;
-  escribir(CLAVE_BORRADORES, todos);
-}
-
-export function eliminarBorrador(practicaId: string): void {
-  const todos = leerBorradores();
-  delete todos[practicaId];
-  escribir(CLAVE_BORRADORES, todos);
-}
-
-export function leerPortafolio(): EntradaPortafolio[] {
-  return leer<EntradaPortafolio[]>(CLAVE_PORTAFOLIO, []);
-}
-
-export function guardarEnPortafolio(entrada: EntradaPortafolio): void {
-  const resto = leerPortafolio().filter((e) => e.practicaId !== entrada.practicaId);
-  escribir(CLAVE_PORTAFOLIO, [entrada, ...resto]);
-}
-
-export function actualizarCriterios(practicaId: string, cumplidos: string[]): void {
-  const todas = leerPortafolio().map((e) =>
-    e.practicaId === practicaId ? { ...e, criteriosCumplidos: cumplidos } : e,
-  );
-  escribir(CLAVE_PORTAFOLIO, todas);
-}
-
-export function quitarDelPortafolio(practicaId: string): void {
-  escribir(
-    CLAVE_PORTAFOLIO,
-    leerPortafolio().filter((e) => e.practicaId !== practicaId),
-  );
+export function olvidarProgresoLocal(): void {
+  try {
+    window.localStorage.removeItem(CLAVE_PORTAFOLIO);
+    window.localStorage.removeItem(CLAVE_BORRADORES);
+  } catch {
+    // Nada que limpiar.
+  }
 }
 
 export function leerReaccionesPropias(): Record<string, string[]> {

@@ -2,11 +2,23 @@
 
 import Link from "next/link";
 import { etiquetaArea } from "@/lib/carreras";
-import { useBorradores } from "@/lib/useAlmacenamiento";
+import { useSesion } from "@/lib/sesion";
+import { AvisoSesion } from "./AvisoSesion";
 import { IconoChevron } from "./Iconos";
 
 export function MiPracticaVista() {
-  const borradores = useBorradores();
+  const { usuario, borradores } = useSesion();
+
+  if (usuario === null) {
+    return (
+      <div className="mt-8">
+        <AvisoSesion
+          titulo="Ingresa para continuar tus proyectos"
+          texto="Tus borradores se guardan en tu cuenta mientras escribes, para que los retomes desde cualquier dispositivo."
+        />
+      </div>
+    );
+  }
 
   if (borradores === undefined) {
     return <div className="mt-8 h-40 rounded-2xl border border-linea bg-blanco" aria-hidden="true" />;
@@ -19,16 +31,16 @@ export function MiPracticaVista() {
   if (lista.length === 0) {
     return (
       <div className="mt-8 rounded-3xl border border-dashed border-linea bg-blanco p-8">
-        <h2 className="text-lg font-bold">Todavía no empiezas ninguna práctica</h2>
+        <h2 className="text-lg font-bold">Todavía no empiezas ningún proyecto</h2>
         <p className="mt-2 max-w-[55ch] leading-relaxed text-pizarra">
           Elige un encargo, empieza a escribir tu solución y vuelve aquí cuando
           quieras continuarla.
         </p>
         <Link
-          href="/explorar"
+          href="/proyectos"
           className="mt-5 inline-flex rounded-xl bg-cobalto px-6 py-3 font-bold text-blanco hover:bg-cobalto-hondo"
         >
-          Explorar prácticas
+          Ver proyectos
         </Link>
       </div>
     );
@@ -39,7 +51,7 @@ export function MiPracticaVista() {
       {lista.map((b) => (
         <li key={b.practicaId}>
           <Link
-            href={`/practicas/${b.practicaId}`}
+            href={`/proyectos/${b.practicaId}`}
             className="group flex flex-wrap items-center gap-x-6 gap-y-4 px-5 py-5 hover:bg-niebla sm:flex-nowrap sm:px-6"
           >
             <div className="min-w-0 flex-[1_1_20rem]">

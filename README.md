@@ -1,8 +1,8 @@
 # Escalón Cero
 
-**Practica tu primer empleo antes de tenerlo.**
+**Gana experiencia antes de tu primer empleo.**
 
-Casos reales del primer año de trabajo: el estudiante decide qué haría y luego descubre qué pasó de verdad.
+Un marketplace de primera experiencia: empresas reales que todavía no pueden contratar a un junior ofrecen encargos que suman al CV (y algunos retos con premio en efectivo). Para postular, el estudiante sigue la ruta de su rol y entrega sus proyectos como prueba de lo que sabe hacer.
 
 🔗 **Demo:** [escalon-cero-seven.vercel.app](https://escalon-cero-seven.vercel.app)
 
@@ -21,14 +21,19 @@ La IA domina el conocimiento que está escrito. Lo que no tiene es el **conocimi
 
 ## Nuestra propuesta
 
-Escalón Cero reúne casos reales y anonimizados de trabajos junior. Cada caso cuenta qué le pidieron a un junior, qué complicación apareció, qué decidió y **qué pasó de verdad**: el desenlace que ninguna IA puede inventar.
+Si la IA absorbe los puestos junior, la experiencia tiene que poder ganarse de otra forma. Escalón Cero conecta dos lados:
+
+- **Oferta:** empresas pequeñas o en crecimiento que necesitan ayuda pero no tienen presupuesto para un sueldo junior. La mayoría ofrece **experiencias con empresa**: encargos reales sin pago, a cambio de constancia, carta de recomendación y un caso real para el portafolio. Algunas publican **retos con premio** (como un *bug bounty*: se paga por cada falla confirmada). En el MVP, el equipo de Escalón Cero consigue cada oportunidad junto con la empresa.
+- **Demanda:** estudiantes de últimos ciclos y recién egresados sin experiencia que pueda mostrarse.
+- **El filtro:** cada oportunidad pide haber avanzado la **ruta** de su rol hasta cierta etapa. Así una empresa que busca un QA solo recibe postulaciones de quienes hicieron los proyectos de QA.
 
 ## Cómo funciona
 
-1. **Explora el encargo:** contexto, lo que te pidieron, la complicación que nadie anticipó y los recursos para trabajar (por ejemplo, una base de datos ficticia).
-2. **Entrega tu solución:** haces el trabajo con las herramientas del puesto (Power BI, Excel, un ambiente de pruebas…) y explicas tus decisiones.
-3. **Descubre qué pasó:** recién entonces ves qué hizo el junior, cómo terminó y lo que la universidad no le enseñó.
-4. **Muéstralo:** revisas tu entrega con criterios claros y la guardas en tu portafolio, listo para exportar en PDF.
+- **Ruta** — el mapa de un rol en 3 etapas. Cada etapa dice qué aprender (con recursos gratuitos) y con qué proyecto demostrarlo.
+- **Proyecto** — un encargo simulado de esa etapa: contexto, encargo, complicación y recursos. Entregas tu solución y recién entonces ves qué hizo el junior real y cómo terminó. La entrega queda en tu portafolio.
+- **Oportunidad** — al completar la etapa que pide la empresa, se desbloquea la postulación y tus proyectos se adjuntan como prueba.
+
+Tu progreso se guarda en tu cuenta (Supabase Auth), y la base de datos vuelve a verificar el requisito al postular.
 
 Decidir antes de ver el desenlace hace visible el razonamiento, el principio del *aprendizaje cognitivo* (Collins, Brown y Holum, 1991).
 
@@ -61,21 +66,27 @@ El catálogo se explora como en una plataforma de cursos: desde el menú **Explo
 
 ```
 src/
-  app/                      Rutas: portada, explorar, práctica, mi práctica y portafolio
+  app/                      Portada, rutas, proyectos, oportunidades, ingreso, portafolio y postulaciones
   components/               Componentes de interfaz
   lib/
     supabase.ts             Cliente de Supabase
-    practicas.ts            Lecturas de prácticas en el servidor
+    practicas.ts            Lecturas de proyectos en el servidor
+    oportunidades.ts        Lecturas de oportunidades en el servidor
+    rutas.ts                Rutas por rol: etapas, temas y recursos
+    requisitos.ts           Qué proyectos pide cada oportunidad
+    sesion.tsx              Cuenta del estudiante y su progreso
     carreras.ts             Áreas y familias de áreas
     menu.ts                 Datos del menú Explorar
     texto.ts                Búsqueda sin tildes, duraciones y plurales
     tipos.ts                Tipos de datos y etiquetas
-    almacenamiento.ts       Borradores y portafolio en el navegador
+    almacenamiento.ts       Tipos del progreso y reacciones en el navegador
 supabase/
   schema.sql                Tablas, políticas de seguridad y función publicar_caso
   migracion-002-practicas.sql  Campos de práctica y prácticas de ejemplo
   migracion-003-recursos.sql   Herramientas, requisitos, recursos y la práctica de Power BI
-public/recursos/            Archivos ficticios que se descargan desde las prácticas
+  migracion-004-oportunidades.sql  Oportunidades, postulaciones y oportunidades de ejemplo
+  migracion-005-cuentas-y-rutas.sql  Rutas y etapas, requisitos por rol, entregas y borradores por usuario
+public/recursos/            Archivos ficticios que se descargan desde los proyectos
 ```
 
 ## Desarrollo local
@@ -89,7 +100,7 @@ npm run dev
 ```
 
 Variables de entorno requeridas: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql` y `supabase/migracion-003-recursos.sql`.
+La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql`, `supabase/migracion-003-recursos.sql`, `supabase/migracion-004-oportunidades.sql` y `supabase/migracion-005-cuentas-y-rutas.sql`. En Authentication → Sign In / Providers → Email, desactiva «Confirm email» para que el registro sea inmediato.
 
 ## Equipo
 

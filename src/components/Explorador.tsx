@@ -236,7 +236,7 @@ export function Explorador({
           <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <h2 id="titulo-resultados" aria-live="polite" className="text-lg font-bold">
-                {plural(visibles.length, "práctica", "prácticas")}
+                {plural(visibles.length, "proyecto", "proyectos")}
               </h2>
               {(activos > 0 || consulta) && (
                 <button
@@ -267,7 +267,7 @@ export function Explorador({
 
           {visibles.length === 0 ? (
             <div className="mt-5 rounded-2xl border border-dashed border-linea bg-blanco p-7">
-              <p className="font-bold">Ninguna práctica coincide con tu búsqueda</p>
+              <p className="font-bold">Ningún proyecto coincide con tu búsqueda</p>
               <p className="mt-1.5 text-sm text-pizarra">
                 Prueba con otras palabras o quita alguno de los filtros.
               </p>

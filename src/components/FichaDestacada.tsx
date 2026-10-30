@@ -13,7 +13,7 @@ export async function FichaDestacada() {
   if (!practica) {
     return (
       <div className="rounded-3xl border border-dashed border-linea bg-blanco p-8 text-pizarra">
-        Pronto publicaremos la primera práctica. Mientras tanto, cuéntanos qué
+        Pronto publicaremos el primer proyecto. Mientras tanto, cuéntanos qué
         tarea de tu primer trabajo te habría gustado practicar.
       </div>
     );
@@ -22,7 +22,7 @@ export async function FichaDestacada() {
   return (
     <article className="relative rounded-3xl border border-linea bg-blanco p-6 sm:p-8">
       <span className="inline-flex rounded-full bg-lima px-3 py-1 text-xs font-bold text-tinta">
-        Práctica destacada
+        Proyecto destacado
       </span>
       <p className="mt-4 text-sm font-semibold text-pizarra">
         {practica.rol} <span aria-hidden="true">en</span>{" "}
@@ -69,7 +69,7 @@ export async function FichaDestacada() {
 
       {practica.habilidades.length > 0 && (
         <div className="mt-6 border-t border-linea pt-5">
-          <p className="text-sm font-bold">En esta práctica vas a:</p>
+          <p className="text-sm font-bold">En este proyecto vas a:</p>
           <ul className="mt-3 space-y-2.5">
             {practica.habilidades.map((h) => (
               <li key={h} className="flex items-start gap-2.5 text-sm leading-relaxed">
@@ -82,10 +82,10 @@ export async function FichaDestacada() {
       )}
 
       <Link
-        href={`/practicas/${practica.id}`}
+        href={`/proyectos/${practica.id}`}
         className="mt-7 inline-flex w-full items-center justify-center rounded-xl bg-cobalto px-6 py-3.5 font-bold text-blanco transition-colors hover:bg-cobalto-hondo sm:w-auto"
       >
-        Empezar práctica
+        Empezar proyecto
       </Link>
     </article>
   );
@@ -95,7 +95,7 @@ export function FichaDestacadaCargando() {
   return (
     <div
       aria-busy="true"
-      aria-label="Cargando práctica destacada"
+      aria-label="Cargando proyecto destacado"
       className="h-[26rem] animate-pulse rounded-3xl border border-linea bg-blanco motion-reduce:animate-none"
     />
   );

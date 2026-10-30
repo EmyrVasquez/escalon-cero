@@ -4,7 +4,7 @@ import { ETIQUETAS_NIVEL, type PracticaResumen } from "@/lib/tipos";
 import { EtiquetaVeracidad } from "./EtiquetaVeracidad";
 import { IconoChevron } from "./Iconos";
 
-/** Una práctica dentro de una lista (portada y catálogo). */
+/** Un proyecto dentro de una lista (portada, catálogo y rutas). */
 export function FilaPractica({
   practica: p,
   conResumen = false,
@@ -14,7 +14,7 @@ export function FilaPractica({
 }) {
   return (
     <Link
-      href={`/practicas/${p.id}`}
+      href={`/proyectos/${p.id}`}
       className="group flex items-start gap-4 px-5 py-5 transition-colors hover:bg-niebla sm:px-6"
     >
       <div className="min-w-0 flex-1">
@@ -40,7 +40,7 @@ export function ListaPracticasCargando({ filas = 3 }: { filas?: number }) {
   return (
     <div
       aria-busy="true"
-      aria-label="Cargando prácticas"
+      aria-label="Cargando proyectos"
       className="animate-pulse rounded-2xl border border-linea bg-blanco motion-reduce:animate-none"
       style={{ height: `${filas * 7.5}rem` }}
     />

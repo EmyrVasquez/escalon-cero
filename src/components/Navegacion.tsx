@@ -7,21 +7,34 @@ import type { DatosMenu } from "@/lib/menu";
 import { plural } from "@/lib/texto";
 import { IconoChevronAbajo } from "./Iconos";
 
-const ESPACIO = [
-  { href: "/mi-practica", etiqueta: "Mi práctica" },
-  { href: "/portafolio", etiqueta: "Mi portafolio" },
-];
-
 const CLASE_BOTON =
   "inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.92rem] font-semibold transition-colors";
 const ACTIVO = "bg-cielo text-cobalto";
 const INACTIVO = "text-pizarra hover:text-tinta";
 
 export function estaEnExplorar(ruta: string | null) {
-  return !!ruta && (ruta.startsWith("/explorar") || ruta.startsWith("/practicas"));
+  return !!ruta && ruta.startsWith("/proyectos");
 }
 
-/** Botón «Explorar» con el menú por área, rol y herramienta. */
+/** Enlace del menú principal, resaltado cuando se está en su sección. */
+export function EnlacePrincipal({ href, etiqueta }: { href: string; etiqueta: string }) {
+  const ruta = usePathname();
+  return <EnlacePrincipalFijo href={href} etiqueta={etiqueta} activo={!!ruta?.startsWith(href)} />;
+}
+
+export function EnlacePrincipalFijo({ href, etiqueta, activo = false }: { href: string; etiqueta: string; activo?: boolean }) {
+  return (
+    <Link
+      href={href}
+      aria-current={activo ? "page" : undefined}
+      className={`${CLASE_BOTON} whitespace-nowrap ${activo ? ACTIVO : INACTIVO}`}
+    >
+      {etiqueta}
+    </Link>
+  );
+}
+
+/** Botón «Proyectos» con el menú por área, rol y herramienta. */
 export function MenuExplorar({ menu }: { menu: DatosMenu }) {
   const ruta = usePathname();
   // El menú se recuerda abierto solo en la ruta donde se abrió: al navegar se cierra.
@@ -60,9 +73,9 @@ export function MenuExplorar({ menu }: { menu: DatosMenu }) {
         aria-expanded={abierto}
         aria-controls={idPanel}
         onClick={() => setAbiertoEn(abierto ? null : ruta)}
-        className={`${CLASE_BOTON} ${abierto || estaEnExplorar(ruta) ? ACTIVO : INACTIVO}`}
+        className={`${CLASE_BOTON} whitespace-nowrap ${abierto || estaEnExplorar(ruta) ? ACTIVO : INACTIVO}`}
       >
-        Explorar
+        Proyectos
         <IconoChevronAbajo
           className={`h-4 w-4 transition-transform motion-reduce:transition-none ${abierto ? "rotate-180" : ""}`}
         />
@@ -162,49 +175,23 @@ function PanelExplorar({
 
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 rounded-b-2xl border-t border-linea bg-niebla px-5 py-3.5 text-sm sm:px-6">
         <span className="text-pizarra">
-          {plural(menu.total, "práctica", "prácticas")} en{" "}
+          {plural(menu.total, "proyecto", "proyectos")} en{" "}
           {plural(menu.areasConPracticas, "área", "áreas")}
           {menu.areasEnCamino > 0 && ` · ${plural(menu.areasEnCamino, "área más", "áreas más")} en camino`}
         </span>
-        <Link href="/explorar" onClick={alElegir} className="font-bold text-cobalto hover:underline">
-          Ver todas las prácticas
+        <Link href="/proyectos" onClick={alElegir} className="font-bold text-cobalto hover:underline">
+          Ver todos los proyectos
         </Link>
       </div>
     </div>
   );
 }
 
-/** Mientras cargan los datos del menú, «Explorar» lleva directo al catálogo. */
+/** Mientras cargan los datos del menú, «Proyectos» lleva directo al catálogo. */
 export function EnlaceExplorar() {
   return (
-    <Link href="/explorar" className={`${CLASE_BOTON} ${INACTIVO}`}>
-      Explorar
+    <Link href="/proyectos" className={`${CLASE_BOTON} whitespace-nowrap ${INACTIVO}`}>
+      Proyectos
     </Link>
-  );
-}
-
-export function EnlacesEspacio() {
-  const ruta = usePathname();
-  return <ListaEspacio ruta={ruta} />;
-}
-
-export function ListaEspacio({ ruta }: { ruta?: string }) {
-  return (
-    <ul className="flex items-center gap-1">
-      {ESPACIO.map((enlace) => {
-        const activo = ruta ? ruta.startsWith(enlace.href) : false;
-        return (
-          <li key={enlace.href}>
-            <Link
-              href={enlace.href}
-              aria-current={activo ? "page" : undefined}
-              className={`${CLASE_BOTON} whitespace-nowrap ${activo ? ACTIVO : INACTIVO}`}
-            >
-              {enlace.etiqueta}
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
   );
 }

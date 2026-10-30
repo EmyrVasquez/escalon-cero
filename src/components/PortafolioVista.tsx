@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { quitarDelPortafolio } from "@/lib/almacenamiento";
 import { etiquetaArea } from "@/lib/carreras";
 import { enFrase } from "@/lib/texto";
-import { usePortafolio } from "@/lib/useAlmacenamiento";
+import { useSesion } from "@/lib/sesion";
+import { AvisoSesion } from "./AvisoSesion";
 import { SimboloEscalon } from "./Logo";
 
 export function PortafolioVista() {
-  const portafolio = usePortafolio();
+  const { usuario, nombre, portafolio, quitarEntrega } = useSesion();
 
   return (
     <>
@@ -20,8 +20,16 @@ export function PortafolioVista() {
           </div>
           <h1 className="text-4xl font-extrabold tracking-[-0.045em] sm:text-5xl">Mi portafolio</h1>
           <p className="no-imprimir mt-3 max-w-[60ch] leading-relaxed text-pizarra">
-            Tus entregas, con el encargo y los criterios que revisaste. Se guardan en
-            este navegador; para compartirlas, guárdalas como PDF.
+            Tus entregas, con el encargo y los criterios que revisaste. Se guardan en tu
+            cuenta y se adjuntan a tus postulaciones; para compartirlas, guárdalas como PDF.
+          </p>
+          <p className="no-imprimir mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm font-bold">
+            <Link href="/en-curso" className="text-cobalto hover:underline">
+              Proyectos en curso
+            </Link>
+            <Link href="/oportunidades" className="text-cobalto hover:underline">
+              Oportunidades para postular
+            </Link>
           </p>
         </div>
         {portafolio && portafolio.length > 0 && (
@@ -35,20 +43,31 @@ export function PortafolioVista() {
         )}
       </div>
 
-      {portafolio === undefined ? (
+      {usuario && nombre && (
+        <p className="mt-2 hidden font-semibold print:block">{nombre}</p>
+      )}
+
+      {usuario === null ? (
+        <div className="mt-8">
+          <AvisoSesion
+            titulo="Ingresa para ver tu portafolio"
+            texto="Tu portafolio reúne los proyectos que entregaste. Se guarda en tu cuenta para que no se pierda al cerrar el navegador."
+          />
+        </div>
+      ) : portafolio === undefined ? (
         <div className="mt-8 h-56 rounded-2xl border border-linea bg-blanco" aria-hidden="true" />
       ) : portafolio.length === 0 ? (
         <div className="mt-8 rounded-3xl border border-dashed border-linea bg-blanco p-8">
           <h2 className="text-lg font-bold">Tu portafolio está vacío</h2>
           <p className="mt-2 max-w-[55ch] leading-relaxed text-pizarra">
-            Cada práctica que entregues aparecerá aquí, lista para mostrar cómo
+            Cada proyecto que entregues aparecerá aquí, listo para mostrar cómo
             resuelves el trabajo.
           </p>
           <Link
-            href="/explorar"
+            href="/rutas"
             className="mt-5 inline-flex rounded-xl bg-cobalto px-6 py-3 font-bold text-blanco hover:bg-cobalto-hondo"
           >
-            Hacer mi primera práctica
+            Elegir mi ruta
           </Link>
         </div>
       ) : (
@@ -120,14 +139,14 @@ export function PortafolioVista() {
                 )}
 
                 <div className="no-imprimir mt-6 flex flex-wrap gap-4 border-t border-linea pt-5 text-sm font-bold">
-                  <Link href={`/practicas/${e.practicaId}`} className="text-cobalto hover:underline">
-                    Ver la práctica
+                  <Link href={`/proyectos/${e.practicaId}`} className="text-cobalto hover:underline">
+                    Ver el proyecto
                   </Link>
                   <button
                     type="button"
                     onClick={() => {
                       if (window.confirm("¿Quitar esta entrega de tu portafolio? No se puede deshacer.")) {
-                        quitarDelPortafolio(e.practicaId);
+                        void quitarEntrega(e.practicaId);
                       }
                     }}
                     className="text-pizarra hover:text-alerta"
