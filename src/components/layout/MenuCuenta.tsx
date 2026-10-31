@@ -7,6 +7,7 @@ import { useSesion } from "@/lib/sesion";
 import { IconoChevronAbajo } from "@/components/ui/Iconos";
 
 const ENLACES = [
+  { href: "/mi-espacio", etiqueta: "Mi espacio" },
   { href: "/portafolio", etiqueta: "Mi portafolio" },
   { href: "/en-curso", etiqueta: "Proyectos en curso" },
   { href: "/postulaciones", etiqueta: "Mis postulaciones" },
@@ -14,7 +15,7 @@ const ENLACES = [
 
 /** «Ingresar» sin sesión; con sesión, el menú con el progreso de la persona. */
 export function MenuCuenta() {
-  const { usuario, nombre, cerrarSesion } = useSesion();
+  const { usuario, nombre, cerrarSesion, esDemo } = useSesion();
   const ruta = usePathname();
   const [abiertoEn, setAbiertoEn] = useState<string | null>(null);
   const abierto = abiertoEn !== null && abiertoEn === ruta;
@@ -73,7 +74,7 @@ export function MenuCuenta() {
           id={idMenu}
           className="absolute right-0 top-full z-40 mt-2 w-60 rounded-2xl border border-linea bg-blanco p-2 shadow-[0_24px_48px_-20px_rgba(20,33,61,0.35)]"
         >
-          <p className="truncate px-3 pt-2 pb-1 text-xs text-pizarra">{usuario.email}</p>
+          <p className="truncate px-3 pt-2 pb-1 text-xs text-pizarra">{esDemo ? "Cuenta de ejemplo" : usuario.email}</p>
           <ul>
             {ENLACES.map((e) => (
               <li key={e.href}>

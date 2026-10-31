@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="280" viewBox="0 0 420 280" fill="none">
+  <title>Cartel para una identidad cultural conceptual</title>
+  <g transform="rotate(.8 210 140)" stroke="#14213D" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 21Q25 16 33 17L388 20Q396 20 396 28L394 253Q394 261 386 261L31 258Q23 258 24 250Z" fill="#FFF" stroke-width="3"/>
+    <path d="M43 36H376V243H43Z" fill="#E7EDFF" stroke="none"/>
+    <path d="M55 47H185V207H55Z" fill="#FFF" stroke="none"/>
+    <text x="65" y="78" fill="#14213D" stroke="none" font-family="Arial, sans-serif" font-size="22" font-weight="900" letter-spacing="-1">CULTURA</text>
+    <text x="65" y="106" fill="#14213D" stroke="none" font-family="Arial, sans-serif" font-size="22" font-weight="900" letter-spacing="-1">LOCAL</text>
+    <path d="M66 126H147M66 135H139M66 144H124M66 177H152M66 185H140M66 193H118" stroke-width="2"/>
+    <path d="M191 36H253V243H191Z" fill="#2855F9" stroke="none"/>
+    <path d="M191 36H253V112Q204 104 191 36Z" fill="#14213D" stroke="none"/>
+    <path d="M191 164Q239 179 253 243H191Z" fill="#FFF" stroke="none"/>
+    <path d="M283 47A48 48 0 0 1 283 143Z" fill="#2855F9" stroke="none"/>
+    <path d="M283 158A48 48 0 0 1 283 254Z" fill="#14213D" stroke="none"/>
+    <path d="M309 243A48 48 0 0 1 357 195V243Z" fill="#2855F9" stroke="none"/>
+    <path d="M318 160H365M318 168H357M318 176H346" stroke-width="1.7"/>
+    <path d="M53 228H160M53 236H137" stroke-width="2"/>
+    <path d="M208 134C208 119 233 115 237 133C241 151 211 154 208 134Z" fill="#14213D" stroke="none"/>
+  </g>
+</svg>

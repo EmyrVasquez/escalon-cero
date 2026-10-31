@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { areaActiva } from "./areas";
 import { supabase } from "./supabase";
 import type { Proyecto, ProyectoResumen } from "./tipos";
 
@@ -18,7 +19,8 @@ export const obtenerProyectos = cache(async (): Promise<ProyectoResumen[]> => {
     .order("created_at", { ascending: true });
 
   if (error) throw new Error(`No se pudieron cargar los proyectos: ${error.message}`);
-  return (data ?? []) as ProyectoResumen[];
+  // Solo las áreas abiertas del piloto (ver AREAS_ACTIVAS).
+  return ((data ?? []) as ProyectoResumen[]).filter((x) => areaActiva(x.carrera));
 });
 
 export const obtenerProyecto = cache(async (id: string): Promise<Proyecto | null> => {

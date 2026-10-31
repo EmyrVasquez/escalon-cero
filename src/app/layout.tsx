@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Encabezado } from "@/components/layout/Encabezado";
 import { Pie } from "@/components/layout/Pie";
+import { SelectorVista } from "@/components/layout/SelectorVista";
+import { Suspense } from "react";
 import { ProveedorSesion } from "@/lib/sesion";
 import "./globals.css";
 
@@ -28,6 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <ProveedorSesion>
           <Encabezado />
+          <Suspense fallback={<div className="h-12" aria-hidden="true" />}>
+            <SelectorVista />
+          </Suspense>
           <main id="contenido" className="flex-1">
             {children}
           </main>

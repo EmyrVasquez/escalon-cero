@@ -79,7 +79,14 @@ interface Sesion {
   quitarEntrega: (proyectoId: string) => Promise<void>;
   guardarBorrador: (borrador: Omit<Borrador, "actualizado">) => void;
   cerrarSesion: () => Promise<void>;
+  /** La sesión es la cuenta de ejemplo de la vista «Estudiante». */
+  esDemo: boolean;
+  /** Abre la vista «Estudiante» con una cuenta de ejemplo propia de este navegador. */
+  entrarComoDemo: () => Promise<string | null>;
 }
+
+/** Nombre de la estudiante de ejemplo. */
+export const NOMBRE_DEMO = "Lucía Ramos";
 
 const Contexto = createContext<Sesion | null>(null);
 
@@ -478,6 +485,25 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   }, []);
 
+  const entrarComoDemo = useCallback(async (): Promise<string | null> => {
+    const datos = { nombre: NOMBRE_DEMO, demo: true };
+    // Lo normal: una sesión anónima de Supabase (Authentication → Allow anonymous sign-ins).
+    const anonima = await supabase.auth.signInAnonymously({ options: { data: datos } });
+    if (!anonima.error) return null;
+    // Si el ingreso anónimo está apagado, se crea una cuenta con un correo de ejemplo.
+    const id = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+    const { error } = await supabase.auth.signUp({
+      email: `demo-${id}@example.com`,
+      password: crypto.randomUUID(),
+      options: { data: datos },
+    });
+    if (error) {
+      console.error("Vista de estudiante:", anonima.error.message, "/", error.message);
+      return "No pudimos abrir la vista de estudiante. En Supabase, activa «Allow anonymous sign-ins».";
+    }
+    return null;
+  }, []);
+
   const valor = useMemo<Sesion>(() => {
     const nombre =
       (typeof usuario?.user_metadata?.nombre === "string" && usuario.user_metadata.nombre) ||
@@ -497,8 +523,10 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
       quitarEntrega,
       guardarBorrador,
       cerrarSesion,
+      esDemo: !!usuario && (usuario.is_anonymous === true || usuario.user_metadata?.demo === true),
+      entrarComoDemo,
     };
-  }, [usuario, cargando, propios, entregar, comprobar, urlArchivo, postular, actualizarCriterios, quitarEntrega, guardarBorrador, cerrarSesion]);
+  }, [entrarComoDemo, usuario, cargando, propios, entregar, comprobar, urlArchivo, postular, actualizarCriterios, quitarEntrega, guardarBorrador, cerrarSesion]);
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

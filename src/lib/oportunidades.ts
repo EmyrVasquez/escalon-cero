@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { areaActiva } from "./areas";
 import { supabase } from "./supabase";
 import type { Oportunidad, OportunidadResumen } from "./tipos";
 
@@ -20,7 +21,8 @@ export const obtenerOportunidades = cache(async (): Promise<OportunidadResumen[]
     .order("cierra", { ascending: true, nullsFirst: false });
 
   if (error) throw new Error(`No se pudieron cargar las oportunidades: ${error.message}`);
-  return (data ?? []) as OportunidadResumen[];
+  // Solo las áreas abiertas del piloto (ver AREAS_ACTIVAS).
+  return ((data ?? []) as OportunidadResumen[]).filter((x) => areaActiva(x.carrera));
 });
 
 export const obtenerOportunidad = cache(async (id: string): Promise<Oportunidad | null> => {

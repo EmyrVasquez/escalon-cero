@@ -27,7 +27,15 @@ Todo gira alrededor de tres piezas:
 
 La mayoría de oportunidades son experiencia con empresa: un encargo sin pago a cambio de constancia, carta de recomendación y un caso real para el portafolio. Algunas son retos con premio, al estilo de un bug bounty: se paga por cada falla confirmada.
 
-En esta versión solo existe la vista del estudiante. Las oportunidades las conseguimos nosotros hablando con las empresas, y las de la demo son de empresas ficticias (la web las marca como «Oportunidad de ejemplo»).
+Las oportunidades las conseguimos nosotros hablando con las empresas, y las de la demo son de empresas ficticias (la web las marca como «Oportunidad de ejemplo»). El piloto cubre tecnología (ERP, datos y QA); diseño, comunicación y negocios aparecen como «Próximamente».
+
+### Tres vistas para la demo
+
+Arriba de cada página hay un selector **General / Estudiante / Empresa**:
+
+- **General**: la web tal cual. Puedes crear tu cuenta y hacer el proyecto de verdad.
+- **Estudiante**: entra al instante como Lucía Ramos, una cuenta de ejemplo con sesión iniciada, y abre «Mi espacio» (`/mi-espacio`): siguiente paso, avance en la ruta y postulaciones. Usa el inicio de sesión anónimo de Supabase. Volver a «General» cierra esa sesión.
+- **Empresa**: el panel de una empresa ficticia (`/empresa`) con sus avisos, tres postulaciones para revisar en detalle y el formulario para publicar un aviso. Todo es de ejemplo y no se guarda: todavía no hay cuentas de empresa.
 
 ### El flujo que se puede probar de punta a punta
 
@@ -44,7 +52,7 @@ Las respuestas correctas nunca llegan al navegador: están en una tabla que la w
 ## Cómo está hecho
 
 - **Web**: Next.js 16 (App Router), React 19, TypeScript y Tailwind CSS 4, desplegada en Vercel. Cada push a `main` se publica solo.
-- **Backend**: Supabase. Usamos Postgres con Row Level Security para los datos, Auth para las cuentas con correo y contraseña, y Storage para los archivos que suben los estudiantes.
+- **Backend**: Supabase. Usamos Postgres con Row Level Security para los datos, Auth para las cuentas con correo y contraseña (y una sesión anónima para la vista «Estudiante»), y Storage para los archivos que suben los estudiantes.
 
 No tenemos un servidor propio. La lógica que no puede depender del navegador (corregir las cifras, validar requisitos, quién ve qué) vive en la base de datos; el resto está en la web.
 
@@ -54,13 +62,13 @@ No tenemos un servidor propio. La lógica que no puede depender del navegador (c
 src/
   app/                  Una carpeta por página (las URL de la web)
   components/
-    layout/             Encabezado, menú, pie de página
-    inicio/             Piezas de la portada
-    rutas/              Mapa de la ruta y avance
+    layout/             Encabezado, menú, selector de vista, pie de página
+    rutas/              Camino de la ruta y avance
     proyectos/          Catálogo, entrega, resultado y solución
     oportunidades/      Fichas, requisito y postulación
-    cuenta/             Ingreso, portafolio, proyectos en curso, postulaciones
-    ui/                 Íconos
+    cuenta/             Ingreso, mi espacio, portafolio, en curso, postulaciones
+    empresa/            Vista de empresa de ejemplo
+    ui/                 Íconos e ilustraciones
   lib/
     supabase.ts         Cliente de Supabase
     proyectos.ts        Lectura de proyectos (servidor)
@@ -68,7 +76,9 @@ src/
     rutas.ts            Contenido de las rutas: etapas, temas y recursos
     requisitos.ts       Qué proyectos pide cada oportunidad
     sesion.tsx          Cuenta del estudiante y su progreso (navegador)
-    areas.ts            Áreas (software, datos, ERP…)
+    areas.ts            Áreas, las activas del piloto y las secciones «Próximamente»
+    empresa-demo.ts     Empresa y postulantes ficticios de la vista de empresa
+    montado.ts          Evita choques entre el HTML del servidor y la sesión
     tipos.ts            Tipos y textos de etiquetas
     menu.ts, texto.ts   Menú de proyectos y utilidades de texto
     reacciones.ts       Reacciones ya marcadas (lo único en localStorage)
@@ -99,7 +109,7 @@ Las variables son `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`, 
 Para preparar la base de datos:
 
 1. En el SQL Editor de Supabase, corre `supabase/schema.sql` y luego `supabase/seed.sql`. Los dos se pueden volver a correr sin problema.
-2. En Authentication → Sign In / Providers → Email, deja activado el proveedor Email y desactiva «Confirm email». Así las cuentas funcionan al instante y no dependes del límite de correos del plan gratuito.
+2. En Authentication → Sign In / Providers → Email, deja activado el proveedor Email y desactiva «Confirm email». Así las cuentas funcionan al instante y no dependes del límite de correos del plan gratuito. En la misma sección activa «Allow anonymous sign-ins» para que funcione la vista «Estudiante».
 
 La base de producción ya tiene todo esto; estos pasos son para una base nueva.
 

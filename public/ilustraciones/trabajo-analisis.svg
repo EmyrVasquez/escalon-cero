@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="280" viewBox="0 0 420 280" fill="none">
+  <title>Informe conceptual con gráficos y tabla de datos</title>
+  <g transform="rotate(-.7 210 140)" stroke="#14213D" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 22Q24 16 32 17L389 20Q397 20 396 28L395 254Q395 261 387 261L30 258Q23 258 23 250Z" fill="#FFF" stroke-width="3"/>
+    <text x="44" y="53" fill="#14213D" stroke="none" font-family="Arial, sans-serif" font-size="23" font-weight="900" letter-spacing="-.6">INFORME</text>
+    <path d="M45 70H171M45 80H151M45 90H126M45 225H206M45 235H175" stroke-width="2"/>
+    <path d="M46 111V205H214" stroke-width="1.8"/>
+    <path d="M60 176H83V204H60Z" fill="#2855F9" stroke="none"/>
+    <path d="M100 150H123V204H100Z" fill="#2855F9" stroke="none"/>
+    <path d="M140 162H163V204H140Z" fill="#14213D" stroke="none"/>
+    <path d="M180 119H203V204H180Z" fill="#2855F9" stroke="none"/>
+    <path d="M237 41V237" stroke-width="1.7"/>
+    <path d="M310 49A49 49 0 1 0 352 124L310 98Z" fill="#2855F9" stroke="#FFF" stroke-width="3"/>
+    <path d="M315 47A49 49 0 0 1 354 70L315 96Z" fill="#14213D" stroke="#FFF" stroke-width="3"/>
+    <path d="M318 102L358 75A49 49 0 0 1 358 129Z" fill="#E7EDFF" stroke="#14213D" stroke-width="1.8"/>
+    <path d="M259 167H374M259 188H374M259 210H374M259 233H374M286 167V233M337 167V233" stroke-width="1.5"/>
+    <path d="M259 155H331M267 179H278M295 179H325M347 179H365M267 199H278M295 199H317M347 199H365M267 222H278M295 222H325M347 222H360" stroke-width="1.7"/>
+  </g>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="280" viewBox="0 0 420 280" fill="none">
+  <title>Prototipo de una página web adaptable</title>
+  <g transform="rotate(-1 210 140)" stroke="#14213D" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 23Q23 17 31 17L389 19Q397 19 397 27L395 254Q395 261 387 261L30 259Q23 259 23 251Z" fill="#FFF" stroke-width="3"/>
+    <path d="M44 44H275V233H44Z" fill="#FFF" stroke-width="2"/>
+    <path d="M44 67H275M57 55H82M190 55H213M226 55H259" stroke-width="2"/>
+    <path d="M58 86H120M58 96H110M58 113H103M58 121H115M58 129H97" stroke-width="2.2"/>
+    <path d="M58 143H111V157H58Z" fill="#2855F9" stroke-width="1.5"/>
+    <path d="M137 83H260V158H137Z" fill="#E7EDFF" stroke-width="1.5"/>
+    <path d="M154 147L186 113L207 135L227 115L247 147Z" fill="#2855F9" stroke-width="1.7"/>
+    <path d="M229 101A9 9 0 1 0 211 101A9 9 0 1 0 229 101Z" fill="#14213D" stroke="none"/>
+    <path d="M58 176H150M58 186H138M58 196H144M58 213H98" stroke-width="2"/>
+    <path d="M174 176H260V215H174Z" fill="#E7EDFF" stroke-width="1.5"/>
+    <path d="M183 186H220M183 196H249M183 205H239" stroke-width="1.5"/>
+    <path d="M306 64Q306 55 315 55H364Q373 55 373 64V223Q373 232 364 232H315Q306 232 306 223Z" fill="#FFF" stroke-width="3"/>
+    <path d="M330 64H349M316 80H363" stroke-width="2"/>
+    <path d="M316 91H363V143H316Z" fill="#E7EDFF" stroke-width="1.4"/>
+    <path d="M320 137L334 116L346 129L355 119L361 137Z" fill="#2855F9" stroke-width="1.5"/>
+    <path d="M353 104A5 5 0 1 0 343 104A5 5 0 1 0 353 104Z" fill="#14213D" stroke="none"/>
+    <path d="M317 157H361M317 167H352M317 177H357M331 221H348" stroke-width="2"/>
+    <path d="M317 190H362V207H317Z" fill="#2855F9" stroke-width="1.5"/>
+  </g>
+</svg>
