@@ -1,4 +1,4 @@
-import type { Area } from "./carreras";
+import type { Area } from "./areas";
 
 export type TipoVeracidad = "real_anonimizado" | "basado_en_hechos" | "ilustrativo";
 export type EstadoCaso = "pendiente" | "aprobado" | "rechazado";
@@ -9,15 +9,15 @@ export type TipoReaccion =
   | "me_paso_algo_parecido"
   | "no_suele_pasar";
 
-/** Archivo que acompaña una práctica (recurso o solución de referencia). */
+/** Archivo que acompaña un proyecto (recurso o solución de referencia). */
 export interface Recurso {
   nombre: string;
   descripcion?: string | null;
   url: string;
 }
 
-/** Datos de una práctica que se muestran en listas. */
-export interface PracticaResumen {
+/** Datos de un proyecto que se muestran en listas. */
+export interface ProyectoResumen {
   id: string;
   titulo: string;
   carrera: Area;
@@ -72,8 +72,8 @@ export interface ResultadoComprobacion {
   detalle: ResultadoPregunta[];
 }
 
-/** Práctica completa, incluido el desenlace real. */
-export interface Practica extends PracticaResumen {
+/** Proyecto completo, incluido el desenlace real. */
+export interface Proyecto extends ProyectoResumen {
   sector: string | null;
   contexto: string;
   encargo: string;
@@ -187,9 +187,9 @@ export interface Oportunidad extends OportunidadResumen {
   cupos: number;
 }
 
-/** Entrega de una práctica que se adjunta a una postulación. */
+/** Entrega de un proyecto que se adjunta a una postulación. */
 export interface EntregaAdjunta {
-  practica_id: string;
+  proyecto_id: string;
   titulo: string;
   enlace: string | null;
   solucion: string;
@@ -221,3 +221,52 @@ export const ETIQUETAS_MODALIDAD: Record<Modalidad, string> = {
 export const ETIQUETA_OPORTUNIDAD_EJEMPLO = "Oportunidad de ejemplo";
 export const DESCRIPCION_OPORTUNIDAD_EJEMPLO =
   "Empresa ficticia, creada para mostrar cómo funcionará la plataforma.";
+
+// ---------------------------------------------------------------
+// Progreso del estudiante (lo que se carga de su cuenta en sesion.tsx)
+// ---------------------------------------------------------------
+
+export interface Borrador {
+  proyectoId: string;
+  titulo: string;
+  area: string;
+  solucion: string;
+  enlace: string;
+  /** Respuestas a la comprobación automática, si el proyecto la tiene. */
+  respuestas?: Record<string, string>;
+  actualizado: string;
+}
+
+export interface EntradaPortafolio {
+  proyectoId: string;
+  titulo: string;
+  area: string;
+  rol: string;
+  herramientas?: string[];
+  solucion: string;
+  enlace: string;
+  criterios: string[];
+  criteriosCumplidos: string[];
+  entregado: string;
+  /** Ruta del archivo subido en el bucket «entregas», si lo hay. */
+  archivo?: string | null;
+  /** Respuestas a la comprobación automática, por id de pregunta. */
+  respuestas?: Record<string, string>;
+  /** Resultado de la comprobación automática, si el proyecto la tiene. */
+  resultado?: ResultadoComprobacion | null;
+  /**
+   * Si la entrega cuenta como requisito para postular: siempre en proyectos
+   * sin comprobación; en los demás, solo si quedó aprobada.
+   */
+  valida: boolean;
+}
+
+export interface PostulacionEnviada {
+  oportunidadId: string;
+  titulo: string;
+  empresa: string;
+  tipo: string;
+  compensacion: string;
+  proyectos: string[];
+  enviada: string;
+}

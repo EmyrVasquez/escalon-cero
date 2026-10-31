@@ -1,5 +1,5 @@
-import { AREAS, AREAS_EN_CAMINO, FAMILIAS } from "./carreras";
-import type { PracticaResumen } from "./tipos";
+import { AREAS, AREAS_EN_CAMINO, FAMILIAS } from "./areas";
+import type { ProyectoResumen } from "./tipos";
 
 export interface EnlaceMenu {
   etiqueta: string;
@@ -12,7 +12,7 @@ export interface DatosMenu {
   roles: EnlaceMenu[];
   herramientas: EnlaceMenu[];
   total: number;
-  areasConPracticas: number;
+  areasConProyectos: number;
   areasEnCamino: number;
 }
 
@@ -33,8 +33,8 @@ function ordenarPorConteo(conteo: Map<string, number>, parametro: string): Enlac
 }
 
 /** Arma el menú Explorar del encabezado a partir de los proyectos publicados. */
-export function armarMenu(practicas: PracticaResumen[]): DatosMenu {
-  const porArea = contar(practicas.map((p) => p.carrera));
+export function armarMenu(proyectos: ProyectoResumen[]): DatosMenu {
+  const porArea = contar(proyectos.map((p) => p.carrera));
 
   const familias = FAMILIAS.map((f) => {
     const areas = AREAS.filter((a) => a.familia === f.valor);
@@ -54,14 +54,14 @@ export function armarMenu(practicas: PracticaResumen[]): DatosMenu {
     };
   });
 
-  const areasConPracticas = familias.reduce((n, f) => n + f.areas.length, 0);
+  const areasConProyectos = familias.reduce((n, f) => n + f.areas.length, 0);
 
   return {
     familias,
-    roles: ordenarPorConteo(contar(practicas.map((p) => p.rol)), "rol"),
-    herramientas: ordenarPorConteo(contar(practicas.flatMap((p) => p.herramientas ?? [])), "herramienta"),
-    total: practicas.length,
-    areasConPracticas,
+    roles: ordenarPorConteo(contar(proyectos.map((p) => p.rol)), "rol"),
+    herramientas: ordenarPorConteo(contar(proyectos.flatMap((p) => p.herramientas ?? [])), "herramienta"),
+    total: proyectos.length,
+    areasConProyectos,
     areasEnCamino: familias.reduce((n, f) => n + f.enCamino.length, 0),
   };
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { Encabezado } from "@/components/Encabezado";
-import { Pie } from "@/components/Pie";
+import { Encabezado } from "@/components/layout/Encabezado";
+import { Pie } from "@/components/layout/Pie";
 import { ProveedorSesion } from "@/lib/sesion";
 import "./globals.css";
 

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { FilaOportunidad } from "@/components/FilaOportunidad";
-import { FilaPractica } from "@/components/FilaPractica";
-import { MapaRuta } from "@/components/MapaRuta";
-import { ProgresoRuta } from "@/components/ProgresoRuta";
-import { etiquetaArea } from "@/lib/carreras";
+import { FilaOportunidad } from "@/components/oportunidades/FilaOportunidad";
+import { FilaProyecto } from "@/components/proyectos/FilaProyecto";
+import { MapaRuta } from "@/components/rutas/MapaRuta";
+import { ProgresoRuta } from "@/components/rutas/ProgresoRuta";
+import { etiquetaArea } from "@/lib/areas";
 import { obtenerOportunidades } from "@/lib/oportunidades";
-import { obtenerPracticas } from "@/lib/practicas";
+import { obtenerProyectos } from "@/lib/proyectos";
 import { proyectosPorEtapa, proyectosRequeridos } from "@/lib/requisitos";
 import { obtenerRuta } from "@/lib/rutas";
 
@@ -25,7 +25,7 @@ async function ContenidoRuta({ params }: { params: Promise<{ slug: string }> }) 
   if (!ruta) notFound();
 
   const [proyectos, oportunidades] = await Promise.all([
-    obtenerPracticas(),
+    obtenerProyectos(),
     obtenerOportunidades().catch(() => []),
   ]);
   const porEtapa = proyectosPorEtapa(ruta.slug, proyectos);
@@ -133,7 +133,7 @@ async function ContenidoRuta({ params }: { params: Promise<{ slug: string }> }) 
                       <ul className="mt-3 divide-y divide-linea overflow-hidden rounded-2xl border border-linea bg-blanco">
                         {lista.map((p) => (
                           <li key={p.id}>
-                            <FilaPractica practica={p} />
+                            <FilaProyecto proyecto={p} />
                           </li>
                         ))}
                       </ul>

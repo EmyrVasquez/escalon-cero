@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { FilaOportunidad, ListaOportunidadesCargando } from "@/components/FilaOportunidad";
-import { AREAS, esArea } from "@/lib/carreras";
+import { FilaOportunidad, ListaOportunidadesCargando } from "@/components/oportunidades/FilaOportunidad";
+import { AREAS, esArea } from "@/lib/areas";
 import { obtenerOportunidades } from "@/lib/oportunidades";
-import { obtenerPracticas } from "@/lib/practicas";
+import { obtenerProyectos } from "@/lib/proyectos";
 import { proyectosRequeridos } from "@/lib/requisitos";
 import { plural } from "@/lib/texto";
 import {
@@ -65,7 +65,7 @@ async function Listado({ searchParams }: { searchParams: Parametros }) {
   const parametros = await searchParams;
   const tipo = primero(parametros.tipo);
   const area = primero(parametros.area);
-  const [todas, proyectos] = await Promise.all([obtenerOportunidades(), obtenerPracticas()]);
+  const [todas, proyectos] = await Promise.all([obtenerOportunidades(), obtenerProyectos()]);
 
   const filtradas = todas.filter(
     (o) => (!esTipo(tipo) || o.tipo === tipo) && (!esArea(area) || o.carrera === area),

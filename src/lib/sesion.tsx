@@ -2,15 +2,14 @@
 
 import type { User } from "@supabase/supabase-js";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import {
-  leerProgresoLocal,
-  olvidarProgresoLocal,
-  type Borrador,
-  type EntradaPortafolio,
-  type PostulacionLocal,
-} from "./almacenamiento";
 import { supabase } from "./supabase";
-import type { EntregaAdjunta, ResultadoComprobacion } from "./tipos";
+import type {
+  Borrador,
+  EntradaPortafolio,
+  EntregaAdjunta,
+  PostulacionEnviada,
+  ResultadoComprobacion,
+} from "./tipos";
 
 /**
  * Sesión del estudiante con Supabase Auth. El progreso (entregas, borradores y
@@ -22,11 +21,11 @@ interface Datos {
   userId: string;
   portafolio: EntradaPortafolio[];
   borradores: Record<string, Borrador>;
-  postulaciones: PostulacionLocal[];
+  postulaciones: PostulacionEnviada[];
 }
 
 export interface NuevaEntrega {
-  practicaId: string;
+  proyectoId: string;
   titulo: string;
   area: string;
   rol: string;
@@ -58,6 +57,8 @@ export interface NuevaPostulacion {
   correo: string;
   mensaje: string;
   entregas: EntregaAdjunta[];
+  /** CV en PDF; se sube al bucket «entregas», carpeta <user_id>/cv/. */
+  cv: File | null;
 }
 
 interface Sesion {
@@ -66,7 +67,7 @@ interface Sesion {
   nombre: string | null;
   portafolio: EntradaPortafolio[] | undefined;
   borradores: Record<string, Borrador> | undefined;
-  postulaciones: PostulacionLocal[] | undefined;
+  postulaciones: PostulacionEnviada[] | undefined;
   /** Devuelven un mensaje de error para mostrar, o `null` si salió bien. */
   entregar: (entrega: NuevaEntrega) => Promise<string | null>;
   /** Sube el archivo, corrige las cifras en la base de datos y guarda la entrega. */
@@ -74,8 +75,8 @@ interface Sesion {
   /** Enlace temporal para abrir un archivo propio del bucket «entregas». */
   urlArchivo: (ruta: string) => Promise<string | null>;
   postular: (postulacion: NuevaPostulacion) => Promise<string | null>;
-  actualizarCriterios: (practicaId: string, cumplidos: string[]) => void;
-  quitarEntrega: (practicaId: string) => Promise<void>;
+  actualizarCriterios: (proyectoId: string, cumplidos: string[]) => void;
+  quitarEntrega: (proyectoId: string) => Promise<void>;
   guardarBorrador: (borrador: Omit<Borrador, "actualizado">) => void;
   cerrarSesion: () => Promise<void>;
 }
@@ -123,38 +124,7 @@ interface FilaPostulacion {
   oportunidades: Uno<{ titulo: string; empresa: string; tipo: string; compensacion: string }>;
 }
 
-/** Sube a la cuenta lo que se guardó en este navegador antes de las cuentas. */
-async function importarProgresoLocal(): Promise<void> {
-  const { portafolio, borradores } = leerProgresoLocal();
-  if (portafolio.length === 0 && borradores.length === 0) return;
-
-  const entregas = portafolio
-    .filter((e) => e.solucion.trim().length >= 10)
-    .map((e) => ({
-      caso_id: e.practicaId,
-      solucion: e.solucion.slice(0, 2000),
-      enlace: e.enlace || null,
-      criterios_cumplidos: e.criteriosCumplidos ?? [],
-      entregado: e.entregado,
-    }));
-  const pendientes = borradores
-    .filter((b) => !portafolio.some((e) => e.practicaId === b.practicaId))
-    .map((b) => ({ caso_id: b.practicaId, solucion: b.solucion, enlace: b.enlace, actualizado: b.actualizado }));
-
-  const resultados = await Promise.all([
-    entregas.length
-      ? supabase.from("entregas").upsert(entregas, { onConflict: "user_id,caso_id", ignoreDuplicates: true })
-      : null,
-    pendientes.length
-      ? supabase.from("borradores").upsert(pendientes, { onConflict: "user_id,caso_id", ignoreDuplicates: true })
-      : null,
-  ]);
-  if (resultados.every((r) => !r?.error)) olvidarProgresoLocal();
-}
-
 async function cargarDatos(userId: string): Promise<Datos> {
-  await importarProgresoLocal().catch(() => undefined);
-
   const [entregas, borradores, postulaciones] = await Promise.all([
     supabase
       .from("entregas")
@@ -174,7 +144,7 @@ async function cargarDatos(userId: string): Promise<Datos> {
     if (!caso) return [];
     return [
       {
-        practicaId: f.caso_id,
+        proyectoId: f.caso_id,
         titulo: caso.titulo,
         area: caso.carrera,
         rol: caso.rol,
@@ -197,7 +167,7 @@ async function cargarDatos(userId: string): Promise<Datos> {
     const caso = uno(f.casos);
     if (!caso) continue;
     mapaBorradores[f.caso_id] = {
-      practicaId: f.caso_id,
+      proyectoId: f.caso_id,
       titulo: caso.titulo,
       area: caso.carrera,
       solucion: f.solucion,
@@ -207,7 +177,7 @@ async function cargarDatos(userId: string): Promise<Datos> {
     };
   }
 
-  const listaPostulaciones: PostulacionLocal[] = ((postulaciones.data ?? []) as unknown as FilaPostulacion[]).flatMap(
+  const listaPostulaciones: PostulacionEnviada[] = ((postulaciones.data ?? []) as unknown as FilaPostulacion[]).flatMap(
     (f) => {
       const o = uno(f.oportunidades);
       if (!o) return [];
@@ -218,7 +188,7 @@ async function cargarDatos(userId: string): Promise<Datos> {
           empresa: o.empresa,
           tipo: o.tipo,
           compensacion: o.compensacion,
-          practicas: (f.entregas ?? []).map((e) => e.titulo),
+          proyectos: (f.entregas ?? []).map((e) => e.titulo),
           enviada: f.created_at,
         },
       ];
@@ -247,9 +217,9 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
   // Cada carga lleva un número: solo se aplica la más reciente, aunque una
   // anterior termine después (por ejemplo, la del ingreso y la de una entrega).
   const ultimaCarga = useRef(0);
-  const recargar = useCallback((uid: string) => {
+  const recargar = useCallback((uid: string): Promise<void> => {
     const numero = ++ultimaCarga.current;
-    cargarDatos(uid)
+    return cargarDatos(uid)
       .then((nuevos) => {
         if (numero === ultimaCarga.current) setDatos(nuevos);
       })
@@ -257,7 +227,7 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (userId) recargar(userId);
+    if (userId) void recargar(userId);
     else ultimaCarga.current++;
   }, [userId, recargar]);
 
@@ -277,18 +247,18 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
   const guardarBorrador = useCallback(
     (b: Omit<Borrador, "actualizado">) => {
       const actualizado = new Date().toISOString();
-      actualizar((d) => ({ ...d, borradores: { ...d.borradores, [b.practicaId]: { ...b, actualizado } } }));
-      const previo = temporizadores.current.get(b.practicaId);
+      actualizar((d) => ({ ...d, borradores: { ...d.borradores, [b.proyectoId]: { ...b, actualizado } } }));
+      const previo = temporizadores.current.get(b.proyectoId);
       if (previo) clearTimeout(previo);
       temporizadores.current.set(
-        b.practicaId,
+        b.proyectoId,
         setTimeout(() => {
-          temporizadores.current.delete(b.practicaId);
+          temporizadores.current.delete(b.proyectoId);
           void supabase
             .from("borradores")
             .upsert(
               {
-                caso_id: b.practicaId,
+                caso_id: b.proyectoId,
                 solucion: b.solucion,
                 enlace: b.enlace,
                 ...(b.respuestas ? { respuestas: b.respuestas } : {}),
@@ -304,22 +274,22 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
 
   const entregar = useCallback(
     async (e: NuevaEntrega): Promise<string | null> => {
-      const pendiente = temporizadores.current.get(e.practicaId);
+      const pendiente = temporizadores.current.get(e.proyectoId);
       if (pendiente) clearTimeout(pendiente);
-      temporizadores.current.delete(e.practicaId);
+      temporizadores.current.delete(e.proyectoId);
 
       const { error } = await supabase.from("entregas").upsert(
-        { caso_id: e.practicaId, solucion: e.solucion, enlace: e.enlace || null, criterios_cumplidos: [] },
+        { caso_id: e.proyectoId, solucion: e.solucion, enlace: e.enlace || null, criterios_cumplidos: [] },
         { onConflict: "user_id,caso_id" },
       );
       if (error) return "No pudimos guardar tu entrega. Revisa tu conexión a internet y vuelve a intentarlo.";
 
       // Registro anónimo de respuestas para el equipo; si falla, la entrega ya quedó guardada.
-      void supabase.from("respuestas").insert({ caso_id: e.practicaId, respuesta: e.solucion, enlace: e.enlace || null });
-      void supabase.from("borradores").delete().eq("caso_id", e.practicaId);
+      void supabase.from("respuestas").insert({ caso_id: e.proyectoId, respuesta: e.solucion, enlace: e.enlace || null });
+      void supabase.from("borradores").delete().eq("caso_id", e.proyectoId);
 
       const entrada: EntradaPortafolio = {
-        practicaId: e.practicaId,
+        proyectoId: e.proyectoId,
         titulo: e.titulo,
         area: e.area,
         rol: e.rol,
@@ -333,11 +303,11 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
       };
       actualizar((d) => {
         const resto = { ...d.borradores };
-        delete resto[e.practicaId];
+        delete resto[e.proyectoId];
         return {
           ...d,
           borradores: resto,
-          portafolio: [entrada, ...d.portafolio.filter((x) => x.practicaId !== e.practicaId)],
+          portafolio: [entrada, ...d.portafolio.filter((x) => x.proyectoId !== e.proyectoId)],
         };
       });
       return null;
@@ -347,9 +317,9 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
 
   const comprobar = useCallback(
     async (e: EntregaComprobada): Promise<Comprobacion> => {
-      const pendiente = temporizadores.current.get(e.practicaId);
+      const pendiente = temporizadores.current.get(e.proyectoId);
       if (pendiente) clearTimeout(pendiente);
-      temporizadores.current.delete(e.practicaId);
+      temporizadores.current.delete(e.proyectoId);
       // Se lee la sesión directamente: puede haberse abierto recién, antes de que
       // el estado de este proveedor se actualice.
       const { data: sesionActual } = await supabase.auth.getSession();
@@ -363,7 +333,7 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
           .replace(/[\u0300-\u036f]/g, "")
           .replace(/[^a-zA-Z0-9._-]+/g, "-")
           .slice(-80);
-        const ruta = `${uid}/${e.practicaId}/${Date.now()}-${limpio}`;
+        const ruta = `${uid}/${e.proyectoId}/${Date.now()}-${limpio}`;
         const subida = await supabase.storage.from("entregas").upload(ruta, e.archivo, {
           contentType: e.archivo.type || "application/octet-stream",
           upsert: false,
@@ -378,7 +348,7 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
       }
 
       const { data, error } = await supabase.rpc("comprobar_entrega", {
-        p_caso: e.practicaId,
+        p_caso: e.proyectoId,
         p_respuestas: e.respuestas,
         p_solucion: e.solucion,
         p_enlace: e.enlace || null,
@@ -394,12 +364,12 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
       const resultado = data as ResultadoComprobacion;
 
       // Registro anónimo de respuestas para el equipo.
-      void supabase.from("respuestas").insert({ caso_id: e.practicaId, respuesta: e.solucion, enlace: e.enlace || null });
+      void supabase.from("respuestas").insert({ caso_id: e.proyectoId, respuesta: e.solucion, enlace: e.enlace || null });
 
       actualizar((d) => {
-        const previa = d.portafolio.find((x) => x.practicaId === e.practicaId);
+        const previa = d.portafolio.find((x) => x.proyectoId === e.proyectoId);
         const entrada: EntradaPortafolio = {
-          practicaId: e.practicaId,
+          proyectoId: e.proyectoId,
           titulo: e.titulo,
           area: e.area,
           rol: e.rol,
@@ -415,16 +385,17 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
           valida: resultado.aprobada,
         };
         const resto = { ...d.borradores };
-        delete resto[e.practicaId];
+        delete resto[e.proyectoId];
         return {
           ...d,
           borradores: resto,
-          portafolio: [entrada, ...d.portafolio.filter((x) => x.practicaId !== e.practicaId)],
+          portafolio: [entrada, ...d.portafolio.filter((x) => x.proyectoId !== e.proyectoId)],
         };
       });
       // Si la sesión se abrió recién, su progreso puede estar cargándose todavía:
       // se vuelve a leer de la cuenta para que incluya esta entrega.
-      recargar(uid);
+      // Se espera la recarga para que la pantalla de resultado ya la encuentre.
+      await recargar(uid);
       return { resultado, error: null };
     },
     [actualizar, recargar],
@@ -436,27 +407,45 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
   }, []);
 
   const actualizarCriterios = useCallback(
-    (practicaId: string, cumplidos: string[]) => {
+    (proyectoId: string, cumplidos: string[]) => {
       actualizar((d) => ({
         ...d,
-        portafolio: d.portafolio.map((x) => (x.practicaId === practicaId ? { ...x, criteriosCumplidos: cumplidos } : x)),
+        portafolio: d.portafolio.map((x) => (x.proyectoId === proyectoId ? { ...x, criteriosCumplidos: cumplidos } : x)),
       }));
-      void supabase.from("entregas").update({ criterios_cumplidos: cumplidos }).eq("caso_id", practicaId);
+      void supabase.from("entregas").update({ criterios_cumplidos: cumplidos }).eq("caso_id", proyectoId);
     },
     [actualizar],
   );
 
   const quitarEntrega = useCallback(
-    async (practicaId: string) => {
-      const { error } = await supabase.from("entregas").delete().eq("caso_id", practicaId);
-      if (!error) actualizar((d) => ({ ...d, portafolio: d.portafolio.filter((x) => x.practicaId !== practicaId) }));
+    async (proyectoId: string) => {
+      const { error } = await supabase.from("entregas").delete().eq("caso_id", proyectoId);
+      if (!error) actualizar((d) => ({ ...d, portafolio: d.portafolio.filter((x) => x.proyectoId !== proyectoId) }));
     },
     [actualizar],
   );
 
   const postular = useCallback(
     async (p: NuevaPostulacion): Promise<string | null> => {
+      let cv: string | null = null;
+      if (p.cv) {
+        const { data: sesionActual } = await supabase.auth.getSession();
+        const uid = sesionActual.session?.user.id;
+        if (!uid) return "Ingresa a tu cuenta para postular.";
+        const limpio = p.cv.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9._-]+/g, "-")
+          .slice(-80);
+        const ruta = `${uid}/cv/${Date.now()}-${limpio}`;
+        const subida = await supabase.storage
+          .from("entregas")
+          .upload(ruta, p.cv, { contentType: p.cv.type || "application/pdf", upsert: false });
+        if (subida.error) return "No pudimos subir tu CV. Revisa que sea un PDF de menos de 5 MB y vuelve a intentarlo.";
+        cv = ruta;
+      }
       const { error } = await supabase.from("postulaciones").insert({
+        cv,
         oportunidad_id: p.oportunidadId,
         nombre: p.nombre,
         correo: p.correo,
@@ -470,13 +459,13 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
           return "La empresa todavía no puede recibir tu postulación: revisa que hayas entregado todos los proyectos que pide.";
         return "No pudimos enviar tu postulación. Revisa tu conexión a internet y vuelve a intentarlo.";
       }
-      const nueva: PostulacionLocal = {
+      const nueva: PostulacionEnviada = {
         oportunidadId: p.oportunidadId,
         titulo: p.titulo,
         empresa: p.empresa,
         tipo: p.tipo,
         compensacion: p.compensacion,
-        practicas: p.entregas.map((e) => e.titulo),
+        proyectos: p.entregas.map((e) => e.titulo),
         enviada: new Date().toISOString(),
       };
       actualizar((d) => ({ ...d, postulaciones: [nueva, ...d.postulaciones] }));

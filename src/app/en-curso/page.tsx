@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MiPracticaVista } from "@/components/MiPracticaVista";
+import { EnCursoVista } from "@/components/cuenta/EnCursoVista";
 
 export const metadata: Metadata = { title: "Proyectos en curso" };
 
@@ -11,7 +11,7 @@ export default function EnCurso() {
         Los proyectos que empezaste y todavía no entregas. Tus borradores se guardan en
         tu cuenta.
       </p>
-      <MiPracticaVista />
+      <EnCursoVista />
     </div>
   );
 }

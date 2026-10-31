@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { EtiquetaEjemplo, EtiquetaTipo } from "@/components/EtiquetaOportunidad";
-import { IconoCalendario, IconoCheck, IconoHecho, IconoLugar, IconoMaletin } from "@/components/Iconos";
-import { Postulacion, type PracticaRequerida } from "@/components/Postulacion";
-import { etiquetaArea } from "@/lib/carreras";
+import { EtiquetaEjemplo, EtiquetaTipo } from "@/components/oportunidades/EtiquetaOportunidad";
+import { IconoCalendario, IconoCheck, IconoHecho, IconoLugar, IconoMaletin } from "@/components/ui/Iconos";
+import { Postulacion, type ProyectoRequerido } from "@/components/oportunidades/Postulacion";
+import { etiquetaArea } from "@/lib/areas";
 import { obtenerOportunidad } from "@/lib/oportunidades";
-import { obtenerPracticas } from "@/lib/practicas";
+import { obtenerProyectos } from "@/lib/proyectos";
 import { proyectosRequeridos } from "@/lib/requisitos";
 import { obtenerRuta } from "@/lib/rutas";
 import { enFrase, fechaLarga, plural } from "@/lib/texto";
@@ -22,11 +22,11 @@ export default function PaginaOportunidad({ params }: { params: Promise<{ id: st
 
 async function ContenidoOportunidad({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [oportunidad, practicas] = await Promise.all([obtenerOportunidad(id), obtenerPracticas()]);
+  const [oportunidad, proyectos] = await Promise.all([obtenerOportunidad(id), obtenerProyectos()]);
   if (!oportunidad) notFound();
 
   // Los proyectos de su ruta, desde la etapa 1 hasta la que pide la empresa.
-  const requeridas: PracticaRequerida[] = proyectosRequeridos(oportunidad, practicas).map((p) => ({
+  const requeridas: ProyectoRequerido[] = proyectosRequeridos(oportunidad, proyectos).map((p) => ({
     id: p.id,
     titulo: p.titulo,
     rol: p.rol,
@@ -149,7 +149,7 @@ async function ContenidoOportunidad({ params }: { params: Promise<{ id: string }
           compensacion: oportunidad.compensacion,
           estado: oportunidad.estado,
         }}
-        practicas={requeridas}
+        proyectos={requeridas}
         ruta={
           ruta
             ? {

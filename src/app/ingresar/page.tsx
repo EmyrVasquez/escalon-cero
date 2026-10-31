@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { FormularioIngreso } from "@/components/FormularioIngreso";
+import { FormularioIngreso } from "@/components/cuenta/FormularioIngreso";
 
 export const metadata: Metadata = { title: "Ingresar" };
 

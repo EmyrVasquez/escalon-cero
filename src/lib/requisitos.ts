@@ -1,11 +1,11 @@
-import type { OportunidadResumen, PracticaResumen } from "./tipos";
+import type { OportunidadResumen, ProyectoResumen } from "./tipos";
 
 /**
  * Proyectos que pide una oportunidad: los de su ruta, desde la etapa 1 hasta
  * la etapa requerida, en orden de etapa. La base de datos aplica la misma
  * regla al postular (función `cumple_requisitos`).
  */
-export function proyectosRequeridos<T extends Pick<PracticaResumen, "id" | "ruta" | "etapa" | "nivel">>(
+export function proyectosRequeridos<T extends Pick<ProyectoResumen, "id" | "ruta" | "etapa" | "nivel">>(
   oportunidad: Pick<OportunidadResumen, "ruta" | "etapa_requerida">,
   proyectos: T[],
 ): T[] {
@@ -16,7 +16,7 @@ export function proyectosRequeridos<T extends Pick<PracticaResumen, "id" | "ruta
 }
 
 /** Proyectos de una ruta agrupados por etapa (1, 2 y 3). */
-export function proyectosPorEtapa<T extends Pick<PracticaResumen, "ruta" | "etapa" | "nivel">>(
+export function proyectosPorEtapa<T extends Pick<ProyectoResumen, "ruta" | "etapa" | "nivel">>(
   ruta: string,
   proyectos: T[],
 ): Record<1 | 2 | 3, T[]> {

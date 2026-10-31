@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PostulacionesVista } from "@/components/PostulacionesVista";
+import { PostulacionesVista } from "@/components/cuenta/PostulacionesVista";
 
 export const metadata: Metadata = { title: "Mis postulaciones" };
 

@@ -1,4 +1,4 @@
-import type { Area } from "./carreras";
+import type { Area } from "./areas";
 
 /**
  * Una ruta es el mapa de un rol junior. Tiene tres etapas; cada etapa dice qué

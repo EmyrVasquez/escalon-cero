@@ -1,117 +1,123 @@
 # Escalón Cero
 
-**Gana experiencia antes de tu primer empleo.**
+Gana experiencia antes de tu primer empleo.
 
-Un marketplace de primera experiencia: empresas reales que todavía no pueden contratar a un junior ofrecen encargos que suman al CV (y algunos retos con premio en efectivo). Para postular, el estudiante sigue la ruta de su rol y entrega sus proyectos como prueba de lo que sabe hacer.
+Demo: [escalon-cero-seven.vercel.app](https://escalon-cero-seven.vercel.app)
 
-🔗 **Demo:** [escalon-cero-seven.vercel.app](https://escalon-cero-seven.vercel.app)
+Lo hicimos para DSC HACK 2026 (Developer Student Club PUCP), en el reto «Educación 2036», grieta 01: la escalera rota del primer empleo.
 
-Proyecto desarrollado en **DSC HACK 2026** (Developer Student Club PUCP) · Reto «Educación 2036» · Grieta 01: la escalera rota del primer empleo.
+## Por qué existe
 
----
+Para tu primera práctica te piden experiencia, y para tener experiencia necesitas tu primera práctica. Ese círculo siempre existió, pero ahora la IA está haciendo justo las tareas con las que un junior aprendía el oficio, y esos puestos son los primeros en desaparecer.
 
-## El problema
+Algunos datos que nos movieron:
 
-La inteligencia artificial está absorbiendo las tareas con las que los juniors aprendían el oficio.
+- En EE. UU., el empleo de personas de 22 a 25 años en las ocupaciones más expuestas a la IA generativa cayó 13 % en términos relativos, mientras que el de los trabajadores con más experiencia se mantuvo ([Brynjolfsson, Chandar y Chen, 2025](https://siepr.stanford.edu/publications/working-paper/canaries-coal-mine-six-facts-about-recent-employment-effects-artificial)).
+- En el Perú, el 24,1 % de la fuerza laboral está en ocupaciones con alta exposición a la IA generativa (INEI, 2025).
 
-- En EE. UU., el empleo de trabajadores de 22 a 25 años en las ocupaciones más expuestas a la IA generativa tuvo una **caída relativa de 13%**, mientras que el de los trabajadores con más experiencia en esas mismas ocupaciones se mantuvo estable o creció ([Brynjolfsson, Chandar y Chen, Stanford, 2025](https://siepr.stanford.edu/publications/working-paper/canaries-coal-mine-six-facts-about-recent-employment-effects-artificial)).
-- En el Perú, el **24,1% de la fuerza laboral** trabaja en ocupaciones con alta exposición a la IA generativa, sobre todo en puestos técnico-administrativos (INEI, 2025).
-
-La IA domina el conocimiento que está escrito. Lo que no tiene es el **conocimiento tácito**: lo que se aprende haciendo el trabajo y casi nunca se documenta. Si hay menos puestos junior, cada año se transmite menos de ese conocimiento a la siguiente generación ([Ide, 2025](https://arxiv.org/abs/2507.16078)).
-
-## Nuestra propuesta
-
-Si la IA absorbe los puestos junior, la experiencia tiene que poder ganarse de otra forma. Escalón Cero conecta dos lados:
-
-- **Oferta:** empresas pequeñas o en crecimiento que necesitan ayuda pero no tienen presupuesto para un sueldo junior. La mayoría ofrece **experiencias con empresa**: encargos reales sin pago, a cambio de constancia, carta de recomendación y un caso real para el portafolio. Algunas publican **retos con premio** (como un *bug bounty*: se paga por cada falla confirmada). En el MVP, el equipo de Escalón Cero consigue cada oportunidad junto con la empresa.
-- **Demanda:** estudiantes de últimos ciclos y recién egresados sin experiencia que pueda mostrarse.
-- **El filtro:** cada oportunidad pide haber avanzado la **ruta** de su rol hasta cierta etapa. Así una empresa que busca un QA solo recibe postulaciones de quienes hicieron los proyectos de QA.
+Del otro lado hay muchas pymes que necesitan ayuda pero no pueden pagar un sueldo junior, y que tampoco se arriesgan a contratar a alguien sin pruebas de lo que sabe hacer.
 
 ## Cómo funciona
 
-- **Ruta** — el mapa de un rol en 3 etapas. Cada etapa dice qué aprender (con recursos gratuitos) y con qué proyecto demostrarlo.
-- **Proyecto** — un encargo simulado de esa etapa: contexto, encargo, complicación y recursos. Entregas tu solución y recién entonces ves qué hizo el junior real y cómo terminó. La entrega queda en tu portafolio.
-- **Oportunidad** — al completar la etapa que pide la empresa, se desbloquea la postulación y tus proyectos se adjuntan como prueba.
+Todo gira alrededor de tres piezas:
 
-Tu progreso se guarda en tu cuenta (Supabase Auth), y la base de datos vuelve a verificar el requisito al postular.
+- **Ruta**: el mapa de un puesto junior (Desarrollador ERP, QA, analista de datos…) en tres etapas. Cada etapa dice qué aprender y con qué proyecto demostrarlo.
+- **Proyecto**: un encargo de trabajo como los del primer mes en ese puesto, con datos y una complicación real. Lo resuelves, lo entregas y recién ahí ves qué hizo el junior del caso y cómo le fue.
+- **Oportunidad**: un encargo de una empresa. Para postular tienes que haber completado la ruta de ese puesto hasta la etapa que pide la empresa. Así quien busca un QA solo recibe a gente que hizo los proyectos de QA.
 
-Decidir antes de ver el desenlace hace visible el razonamiento, el principio del *aprendizaje cognitivo* (Collins, Brown y Holum, 1991).
+La mayoría de oportunidades son experiencia con empresa: un encargo sin pago a cambio de constancia, carta de recomendación y un caso real para el portafolio. Algunas son retos con premio, al estilo de un bug bounty: se paga por cada falla confirmada.
 
-## Confianza en los casos
+En esta versión solo existe la vista del estudiante. Las oportunidades las conseguimos nosotros hablando con las empresas, y las de la demo son de empresas ficticias (la web las marca como «Oportunidad de ejemplo»).
 
-| Etiqueta | Significado |
-| --- | --- |
-| Caso real anonimizado | Ocurrió así; solo se cambiaron los nombres |
-| Basado en hechos reales | Ocurrió, con detalles modificados por confidencialidad |
-| Ejemplo ilustrativo | Creado con fines didácticos |
-| Validado por la empresa | La empresa confirmó que la situación es real |
+### El flujo que se puede probar de punta a punta
 
-Cada autor se verifica de forma privada antes de publicar, y todo caso pasa por moderación.
+El proyecto «Arma un dashboard de ventas en Power BI para gerencia» está completo:
 
-## Áreas del primer lote
+1. Descargas la exportación de ventas de un ERP: 9 587 filas, con devoluciones mezcladas y clientes duplicados.
+2. Armas el dashboard en Power BI o Excel.
+3. Subes tu archivo (captura, PDF o .pbix) y respondes cinco cifras del año.
+4. La base de datos las corrige al instante. Si fallas, te da una pista; si aciertas cuatro de cinco, apruebas.
+5. Al aprobar ves las respuestas correctas y se desbloquea una oportunidad. Postulas con tu CV y tu proyecto adjunto.
 
-Ingeniería de software, análisis de datos, sistemas empresariales (ERP), marketing digital y diseño, con contabilidad y finanzas, administración y comunicación audiovisual como siguientes áreas.
+Las respuestas correctas nunca llegan al navegador: están en una tabla que la web no puede leer, y solo una función de la base de datos puede marcar una entrega como aprobada. La base también vuelve a revisar el requisito cuando alguien postula, así que no se puede saltar desde la página.
 
-El catálogo se explora como en una plataforma de cursos: desde el menú **Explorar** por área, rol o herramienta, y en `/explorar` con filtros por área, rol, nivel, duración y herramienta.
+## Cómo está hecho
 
-## Stack
+- **Web**: Next.js 16 (App Router), React 19, TypeScript y Tailwind CSS 4, desplegada en Vercel. Cada push a `main` se publica solo.
+- **Backend**: Supabase. Usamos Postgres con Row Level Security para los datos, Auth para las cuentas con correo y contraseña, y Storage para los archivos que suben los estudiantes.
 
-| Capa | Tecnología |
-| --- | --- |
-| Frontend | [Next.js](https://nextjs.org) (App Router) · TypeScript · Tailwind CSS |
-| Base de datos | [Supabase](https://supabase.com) (Postgres con Row Level Security) |
-| Despliegue | [Vercel](https://vercel.com) |
+No tenemos un servidor propio. La lógica que no puede depender del navegador (corregir las cifras, validar requisitos, quién ve qué) vive en la base de datos; el resto está en la web.
 
-## Estructura
+### Carpetas
 
 ```
 src/
-  app/                      Portada, rutas, proyectos, oportunidades, ingreso, portafolio y postulaciones
-  components/               Componentes de interfaz
+  app/                  Una carpeta por página (las URL de la web)
+  components/
+    layout/             Encabezado, menú, pie de página
+    inicio/             Piezas de la portada
+    rutas/              Mapa de la ruta y avance
+    proyectos/          Catálogo, entrega, resultado y solución
+    oportunidades/      Fichas, requisito y postulación
+    cuenta/             Ingreso, portafolio, proyectos en curso, postulaciones
+    ui/                 Íconos
   lib/
-    supabase.ts             Cliente de Supabase
-    practicas.ts            Lecturas de proyectos en el servidor
-    oportunidades.ts        Lecturas de oportunidades en el servidor
-    rutas.ts                Rutas por rol: etapas, temas y recursos
-    requisitos.ts           Qué proyectos pide cada oportunidad
-    sesion.tsx              Cuenta del estudiante y su progreso
-    carreras.ts             Áreas y familias de áreas
-    menu.ts                 Datos del menú Explorar
-    texto.ts                Búsqueda sin tildes, duraciones y plurales
-    tipos.ts                Tipos de datos y etiquetas
-    almacenamiento.ts       Tipos del progreso y reacciones en el navegador
+    supabase.ts         Cliente de Supabase
+    proyectos.ts        Lectura de proyectos (servidor)
+    oportunidades.ts    Lectura de oportunidades (servidor)
+    rutas.ts            Contenido de las rutas: etapas, temas y recursos
+    requisitos.ts       Qué proyectos pide cada oportunidad
+    sesion.tsx          Cuenta del estudiante y su progreso (navegador)
+    areas.ts            Áreas (software, datos, ERP…)
+    tipos.ts            Tipos y textos de etiquetas
+    menu.ts, texto.ts   Menú de proyectos y utilidades de texto
+    reacciones.ts       Reacciones ya marcadas (lo único en localStorage)
 supabase/
-  schema.sql                Tablas, políticas de seguridad y función publicar_caso
-  migracion-002-practicas.sql  Campos de práctica y prácticas de ejemplo
-  migracion-003-recursos.sql   Herramientas, requisitos, recursos y la práctica de Power BI
-  migracion-004-oportunidades.sql  Oportunidades, postulaciones y oportunidades de ejemplo
-  migracion-005-cuentas-y-rutas.sql  Rutas y etapas, requisitos por rol, entregas y borradores por usuario
-  migracion-006-flujo-comprobado.sql Comprobación automática de cifras, archivos de entrega y desbloqueo validado
-public/recursos/            Archivos ficticios que se descargan desde los proyectos
+  schema.sql            Toda la estructura: tablas, reglas de acceso, funciones y bucket
+  seed.sql              Los proyectos, oportunidades y respuestas de la demo
+public/recursos/        Archivos que se descargan desde los proyectos (datos ficticios)
 ```
 
-## Desarrollo local
+### Nombres
+
+En la base de datos la tabla de proyectos se llama `casos`: así empezó el proyecto, cuando eran solo casos para leer. En el código y en la interfaz siempre decimos «proyecto». También evitamos la palabra «práctica» en la web, porque se confunde con las prácticas preprofesionales.
+
+## Correrlo en tu computadora
+
+Necesitas Node.js 20 o superior y un proyecto en Supabase.
 
 ```bash
 git clone https://github.com/EmyrVasquez/escalon-cero.git
 cd escalon-cero
 npm install
-cp .env.example .env.local
+cp .env.example .env.local   # y completa las dos variables
 npm run dev
 ```
 
-Variables de entorno requeridas: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql`, `supabase/migracion-003-recursos.sql`, `supabase/migracion-004-oportunidades.sql` `supabase/migracion-005-cuentas-y-rutas.sql` y `supabase/migracion-006-flujo-comprobado.sql`. En Authentication → Sign In / Providers → Email, deja activado el proveedor Email y desactiva «Confirm email» para que el registro sea inmediato.
+Las variables son `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`, y las encuentras en Supabase, en Project Settings → API.
 
-### Flujo completo de prueba
+Para preparar la base de datos:
 
-El proyecto «Arma un dashboard de ventas en Power BI para gerencia» tiene comprobación automática: la persona descarga los datos, sube su dashboard (captura, PDF o .pbix) y responde cinco cifras. La función `comprobar_entrega` las corrige en la base de datos (las respuestas correctas están en `claves_comprobacion`, que la web no puede leer). Con 4 de 5 aciertos la entrega queda aprobada, se muestra el resultado esperado y se desbloquea la oportunidad «Dashboard de ventas en Power BI para una distribuidora». La imagen de referencia `public/recursos/dashboard-ventas-power-bi/dashboard_esperado.png` se generó con los mismos datos.
+1. En el SQL Editor de Supabase, corre `supabase/schema.sql` y luego `supabase/seed.sql`. Los dos se pueden volver a correr sin problema.
+2. En Authentication → Sign In / Providers → Email, deja activado el proveedor Email y desactiva «Confirm email». Así las cuentas funcionan al instante y no dependes del límite de correos del plan gratuito.
+
+La base de producción ya tiene todo esto; estos pasos son para una base nueva.
+
+## Agregar contenido
+
+Todavía no hay panel de administración, así que se hace desde Supabase:
+
+- **Un proyecto**: una fila en `casos` con `estado = 'aprobado'`, la `ruta` (un slug de `src/lib/rutas.ts`) y la `etapa` (1, 2 o 3). Si tiene archivos para descargar, van en `public/recursos/<nombre-del-proyecto>/`.
+- **Un proyecto que se corrige solo**: además, las preguntas en `casos.comprobacion` y las respuestas en `claves_comprobacion`. El de Power BI en `seed.sql` sirve de modelo.
+- **Una oportunidad**: una fila en `oportunidades` con `estado = 'abierta'`, la `ruta` y la `etapa_requerida`. Si la empresa es ficticia, `es_ejemplo = true`.
+
+Las postulaciones se revisan en la tabla `postulaciones`, y los CV y dashboards en Storage, en el bucket `entregas`.
 
 ## Equipo
 
-- **Emyr Vasquez Riofrio**
-- **Jhon Mejia Quispe**
-- **Gustavo Marcelo Monge Tovar**
+- Emyr Vasquez Riofrio
+- Jhon Mejia Quispe
+- Gustavo Marcelo Monge Tovar
 
 ## Fuentes
 

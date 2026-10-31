@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PortafolioVista } from "@/components/PortafolioVista";
+import { PortafolioVista } from "@/components/cuenta/PortafolioVista";
 
 export const metadata: Metadata = { title: "Mi portafolio" };
 

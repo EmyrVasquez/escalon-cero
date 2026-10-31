@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { IconoChevron } from "@/components/Iconos";
-import { ProgresoRuta } from "@/components/ProgresoRuta";
-import { etiquetaArea } from "@/lib/carreras";
+import { IconoChevron } from "@/components/ui/Iconos";
+import { ProgresoRuta } from "@/components/rutas/ProgresoRuta";
+import { etiquetaArea } from "@/lib/areas";
 import { obtenerOportunidades } from "@/lib/oportunidades";
-import { obtenerPracticas } from "@/lib/practicas";
+import { obtenerProyectos } from "@/lib/proyectos";
 import { RUTAS } from "@/lib/rutas";
 import { plural } from "@/lib/texto";
 
@@ -31,15 +31,15 @@ export default function Rutas() {
 }
 
 async function ListaRutas() {
-  const [practicas, oportunidades] = await Promise.all([
-    obtenerPracticas(),
+  const [proyectos, oportunidades] = await Promise.all([
+    obtenerProyectos(),
     obtenerOportunidades().catch(() => []),
   ]);
 
   return (
     <ul className="mt-10 divide-y divide-linea overflow-hidden rounded-2xl border border-linea bg-blanco">
       {RUTAS.map((r) => {
-        const ids = practicas.filter((p) => p.ruta === r.slug).map((p) => p.id);
+        const ids = proyectos.filter((p) => p.ruta === r.slug).map((p) => p.id);
         const abiertas = oportunidades.filter((o) => o.ruta === r.slug && o.estado === "abierta").length;
         return (
           <li key={r.slug}>

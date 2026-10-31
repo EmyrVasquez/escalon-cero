@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Explorador, type FiltrosIniciales } from "@/components/Explorador";
-import { ListaPracticasCargando } from "@/components/FilaPractica";
-import { obtenerPracticas } from "@/lib/practicas";
+import { Explorador, type FiltrosIniciales } from "@/components/proyectos/Explorador";
+import { ListaProyectosCargando } from "@/components/proyectos/FilaProyecto";
+import { obtenerProyectos } from "@/lib/proyectos";
 
 export const metadata: Metadata = { title: "Proyectos" };
 
@@ -17,7 +17,7 @@ export default function Explorar({ searchParams }: { searchParams: Parametros })
         Cada proyecto pertenece a una etapa de una ruta, y las empresas los piden como
         requisito para postular. Filtra por área, rol, nivel o herramienta.
       </p>
-      <Suspense fallback={<div className="mt-8"><ListaPracticasCargando filas={5} /></div>}>
+      <Suspense fallback={<div className="mt-8"><ListaProyectosCargando filas={5} /></div>}>
         <Catalogo searchParams={searchParams} />
       </Suspense>
     </div>
@@ -31,7 +31,7 @@ function lista(valor: string | string[] | undefined): string[] {
 
 async function Catalogo({ searchParams }: { searchParams: Parametros }) {
   const parametros = await searchParams;
-  const practicas = await obtenerPracticas();
+  const proyectos = await obtenerProyectos();
   const inicial: FiltrosIniciales = {
     q: lista(parametros.q)[0] ?? "",
     area: lista(parametros.area),
@@ -39,5 +39,5 @@ async function Catalogo({ searchParams }: { searchParams: Parametros }) {
     herramienta: lista(parametros.herramienta),
   };
   // La clave reinicia los filtros cuando se llega desde el menú o el buscador.
-  return <Explorador key={JSON.stringify(inicial)} practicas={practicas} inicial={inicial} />;
+  return <Explorador key={JSON.stringify(inicial)} proyectos={proyectos} inicial={inicial} />;
 }
