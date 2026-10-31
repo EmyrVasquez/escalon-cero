@@ -10,7 +10,7 @@ import {
   type PostulacionLocal,
 } from "./almacenamiento";
 import { supabase } from "./supabase";
-import type { EntregaAdjunta } from "./tipos";
+import type { EntregaAdjunta, ResultadoComprobacion } from "./tipos";
 
 /**
  * Sesión del estudiante con Supabase Auth. El progreso (entregas, borradores y
@@ -36,6 +36,18 @@ export interface NuevaEntrega {
   enlace: string;
 }
 
+/** Entrega de un proyecto con comprobación automática (ver migración 006). */
+export interface EntregaComprobada extends NuevaEntrega {
+  respuestas: Record<string, string>;
+  /** Archivo del trabajo (captura, PDF o .pbix); se sube al bucket «entregas». */
+  archivo: File | null;
+}
+
+export interface Comprobacion {
+  resultado: ResultadoComprobacion | null;
+  error: string | null;
+}
+
 export interface NuevaPostulacion {
   oportunidadId: string;
   titulo: string;
@@ -57,6 +69,10 @@ interface Sesion {
   postulaciones: PostulacionLocal[] | undefined;
   /** Devuelven un mensaje de error para mostrar, o `null` si salió bien. */
   entregar: (entrega: NuevaEntrega) => Promise<string | null>;
+  /** Sube el archivo, corrige las cifras en la base de datos y guarda la entrega. */
+  comprobar: (entrega: EntregaComprobada) => Promise<Comprobacion>;
+  /** Enlace temporal para abrir un archivo propio del bucket «entregas». */
+  urlArchivo: (ruta: string) => Promise<string | null>;
   postular: (postulacion: NuevaPostulacion) => Promise<string | null>;
   actualizarCriterios: (practicaId: string, cumplidos: string[]) => void;
   quitarEntrega: (practicaId: string) => Promise<void>;
@@ -75,15 +91,27 @@ interface FilaEntrega {
   caso_id: string;
   solucion: string;
   enlace: string | null;
+  archivo: string | null;
+  respuestas: Record<string, string> | null;
+  resultado: ResultadoComprobacion | null;
+  aprobada: boolean | null;
   criterios_cumplidos: string[];
   entregado: string;
-  casos: Uno<{ titulo: string; carrera: string; rol: string; herramientas: string[]; criterios: string[] }>;
+  casos: Uno<{
+    titulo: string;
+    carrera: string;
+    rol: string;
+    herramientas: string[];
+    criterios: string[];
+    comprobacion: unknown[] | null;
+  }>;
 }
 
 interface FilaBorrador {
   caso_id: string;
   solucion: string;
   enlace: string;
+  respuestas: Record<string, string> | null;
   actualizado: string;
   casos: Uno<{ titulo: string; carrera: string }>;
 }
@@ -130,9 +158,11 @@ async function cargarDatos(userId: string): Promise<Datos> {
   const [entregas, borradores, postulaciones] = await Promise.all([
     supabase
       .from("entregas")
-      .select("caso_id, solucion, enlace, criterios_cumplidos, entregado, casos(titulo, carrera, rol, herramientas, criterios)")
+      .select(
+        "caso_id, solucion, enlace, archivo, respuestas, resultado, aprobada, criterios_cumplidos, entregado, casos(titulo, carrera, rol, herramientas, criterios, comprobacion)",
+      )
       .order("entregado", { ascending: false }),
-    supabase.from("borradores").select("caso_id, solucion, enlace, actualizado, casos(titulo, carrera)"),
+    supabase.from("borradores").select("caso_id, solucion, enlace, respuestas, actualizado, casos(titulo, carrera)"),
     supabase
       .from("postulaciones")
       .select("oportunidad_id, created_at, entregas, oportunidades(titulo, empresa, tipo, compensacion)")
@@ -154,6 +184,10 @@ async function cargarDatos(userId: string): Promise<Datos> {
         criterios: caso.criterios ?? [],
         criteriosCumplidos: f.criterios_cumplidos ?? [],
         entregado: f.entregado,
+        archivo: f.archivo,
+        respuestas: f.respuestas ?? {},
+        resultado: f.resultado,
+        valida: caso.comprobacion ? f.aprobada === true : true,
       },
     ];
   });
@@ -168,6 +202,7 @@ async function cargarDatos(userId: string): Promise<Datos> {
       area: caso.carrera,
       solucion: f.solucion,
       enlace: f.enlace,
+      respuestas: f.respuestas ?? {},
       actualizado: f.actualizado,
     };
   }
@@ -209,16 +244,22 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
 
+  // Cada carga lleva un número: solo se aplica la más reciente, aunque una
+  // anterior termine después (por ejemplo, la del ingreso y la de una entrega).
+  const ultimaCarga = useRef(0);
+  const recargar = useCallback((uid: string) => {
+    const numero = ++ultimaCarga.current;
+    cargarDatos(uid)
+      .then((nuevos) => {
+        if (numero === ultimaCarga.current) setDatos(nuevos);
+      })
+      .catch(() => undefined);
+  }, []);
+
   useEffect(() => {
-    if (!userId) return;
-    let vigente = true;
-    cargarDatos(userId).then((nuevos) => {
-      if (vigente) setDatos(nuevos);
-    });
-    return () => {
-      vigente = false;
-    };
-  }, [userId]);
+    if (userId) recargar(userId);
+    else ultimaCarga.current++;
+  }, [userId, recargar]);
 
   useEffect(() => {
     const pendientes = temporizadores.current;
@@ -246,7 +287,13 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
           void supabase
             .from("borradores")
             .upsert(
-              { caso_id: b.practicaId, solucion: b.solucion, enlace: b.enlace, actualizado },
+              {
+                caso_id: b.practicaId,
+                solucion: b.solucion,
+                enlace: b.enlace,
+                ...(b.respuestas ? { respuestas: b.respuestas } : {}),
+                actualizado,
+              },
               { onConflict: "user_id,caso_id" },
             );
         }, ESPERA_BORRADOR),
@@ -282,6 +329,7 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
         criterios: e.criterios,
         criteriosCumplidos: [],
         entregado: new Date().toISOString(),
+        valida: true,
       };
       actualizar((d) => {
         const resto = { ...d.borradores };
@@ -296,6 +344,96 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
     },
     [actualizar],
   );
+
+  const comprobar = useCallback(
+    async (e: EntregaComprobada): Promise<Comprobacion> => {
+      const pendiente = temporizadores.current.get(e.practicaId);
+      if (pendiente) clearTimeout(pendiente);
+      temporizadores.current.delete(e.practicaId);
+      // Se lee la sesión directamente: puede haberse abierto recién, antes de que
+      // el estado de este proveedor se actualice.
+      const { data: sesionActual } = await supabase.auth.getSession();
+      const uid = sesionActual.session?.user.id;
+      if (!uid) return { resultado: null, error: "Ingresa a tu cuenta para entregar." };
+
+      let archivo: string | null = null;
+      if (e.archivo) {
+        const limpio = e.archivo.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-zA-Z0-9._-]+/g, "-")
+          .slice(-80);
+        const ruta = `${uid}/${e.practicaId}/${Date.now()}-${limpio}`;
+        const subida = await supabase.storage.from("entregas").upload(ruta, e.archivo, {
+          contentType: e.archivo.type || "application/octet-stream",
+          upsert: false,
+        });
+        if (subida.error) {
+          return {
+            resultado: null,
+            error: "No pudimos subir tu archivo. Revisa que pese menos de 20 MB, o pega un enlace en su lugar.",
+          };
+        }
+        archivo = ruta;
+      }
+
+      const { data, error } = await supabase.rpc("comprobar_entrega", {
+        p_caso: e.practicaId,
+        p_respuestas: e.respuestas,
+        p_solucion: e.solucion,
+        p_enlace: e.enlace || null,
+        p_archivo: archivo,
+      });
+      if (error || !data) {
+        const propio = error && (error.code === "22023" || error.code === "42501") ? error.message : null;
+        return {
+          resultado: null,
+          error: propio ?? "No pudimos comprobar tu entrega. Revisa tu conexión a internet y vuelve a intentarlo.",
+        };
+      }
+      const resultado = data as ResultadoComprobacion;
+
+      // Registro anónimo de respuestas para el equipo.
+      void supabase.from("respuestas").insert({ caso_id: e.practicaId, respuesta: e.solucion, enlace: e.enlace || null });
+
+      actualizar((d) => {
+        const previa = d.portafolio.find((x) => x.practicaId === e.practicaId);
+        const entrada: EntradaPortafolio = {
+          practicaId: e.practicaId,
+          titulo: e.titulo,
+          area: e.area,
+          rol: e.rol,
+          herramientas: e.herramientas,
+          solucion: e.solucion,
+          enlace: e.enlace,
+          criterios: e.criterios,
+          criteriosCumplidos: previa?.criteriosCumplidos ?? [],
+          entregado: new Date().toISOString(),
+          archivo: archivo ?? previa?.archivo ?? null,
+          respuestas: e.respuestas,
+          resultado,
+          valida: resultado.aprobada,
+        };
+        const resto = { ...d.borradores };
+        delete resto[e.practicaId];
+        return {
+          ...d,
+          borradores: resto,
+          portafolio: [entrada, ...d.portafolio.filter((x) => x.practicaId !== e.practicaId)],
+        };
+      });
+      // Si la sesión se abrió recién, su progreso puede estar cargándose todavía:
+      // se vuelve a leer de la cuenta para que incluya esta entrega.
+      recargar(uid);
+      return { resultado, error: null };
+    },
+    [actualizar, recargar],
+  );
+
+  const urlArchivo = useCallback(async (ruta: string) => {
+    const { data } = await supabase.storage.from("entregas").createSignedUrl(ruta, 60 * 60);
+    return data?.signedUrl ?? null;
+  }, []);
 
   const actualizarCriterios = useCallback(
     (practicaId: string, cumplidos: string[]) => {
@@ -363,13 +501,15 @@ export function ProveedorSesion({ children }: { children: React.ReactNode }) {
       borradores: cargando ? undefined : (propios?.borradores ?? {}),
       postulaciones: cargando ? undefined : (propios?.postulaciones ?? []),
       entregar,
+      comprobar,
+      urlArchivo,
       postular,
       actualizarCriterios,
       quitarEntrega,
       guardarBorrador,
       cerrarSesion,
     };
-  }, [usuario, cargando, propios, entregar, postular, actualizarCriterios, quitarEntrega, guardarBorrador, cerrarSesion]);
+  }, [usuario, cargando, propios, entregar, comprobar, urlArchivo, postular, actualizarCriterios, quitarEntrega, guardarBorrador, cerrarSesion]);
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

@@ -57,7 +57,11 @@ export function Postulacion({
     }
   }, [enviada]);
 
-  const entregas = practicas.map((p) => ({ practica: p, entrada: portafolio?.find((e) => e.practicaId === p.id) }));
+  // Solo cuentan las entregas válidas: en proyectos con comprobación, las aprobadas.
+  const entregas = practicas.map((p) => {
+    const encontrada = portafolio?.find((e) => e.practicaId === p.id);
+    return { practica: p, entrada: encontrada?.valida ? encontrada : undefined, pendiente: !!encontrada && !encontrada.valida };
+  });
   const hechas = entregas.filter((e) => e.entrada).length;
   const completo = hechas === practicas.length;
   const cerrada = oportunidad.estado === "cerrada";
@@ -132,7 +136,7 @@ export function Postulacion({
           <p className="mt-5 text-pizarra">Esta etapa todavía no tiene proyectos publicados.</p>
         ) : (
           <ul className="mt-5 divide-y divide-linea rounded-2xl border border-linea">
-            {entregas.map(({ practica, entrada }) => (
+            {entregas.map(({ practica, entrada, pendiente }) => (
               <li key={practica.id} className="flex flex-wrap items-center gap-x-4 gap-y-3 p-4 sm:px-5">
                 {entrada ? (
                   <IconoCheck className="h-6 w-6 shrink-0" />
@@ -146,7 +150,7 @@ export function Postulacion({
                   <p className="font-bold leading-snug">{practica.titulo}</p>
                   <p className="mt-0.5 text-sm text-pizarra">
                     {practica.duracion ?? practica.rol}
-                    {entrada ? " · Entregado" : ""}
+                    {entrada ? " · Aprobado" : pendiente ? " · Entregado, falta aprobar" : ""}
                   </p>
                 </div>
                 <Link
@@ -157,7 +161,7 @@ export function Postulacion({
                       : "inline-flex rounded-xl bg-cobalto px-4 py-2.5 text-sm font-bold text-blanco hover:bg-cobalto-hondo"
                   }
                 >
-                  {entrada ? "Ver mi entrega" : "Hacer el proyecto"}
+                  {entrada ? "Ver mi entrega" : pendiente ? "Corregir mi entrega" : "Hacer el proyecto"}
                 </Link>
               </li>
             ))}

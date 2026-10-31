@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 import type { Practica, PracticaResumen } from "./tipos";
 
 const CAMPOS_RESUMEN =
-  "id, titulo, carrera, rol, resumen, nivel, duracion, tipo_veracidad, validado_empresa, destacada, herramientas, ruta, etapa";
+  "id, titulo, carrera, rol, resumen, nivel, duracion, tipo_veracidad, validado_empresa, destacada, herramientas, ruta, etapa, comprobacion";
 
 const CAMPOS_COMPLETOS = `${CAMPOS_RESUMEN}, sector, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, requisitos, recursos, referencia, enlace_obligatorio, lo_que_hice, que_paso, aprendizaje, autor_alias`;
 

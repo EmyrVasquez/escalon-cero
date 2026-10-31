@@ -12,15 +12,21 @@ type Estado = "hecho" | "actual" | "pendiente" | "bloqueado";
 export function PasosPractica({
   practicaId,
   conRecursos,
+  comprobado = false,
 }: {
   practicaId: string;
   conRecursos: boolean;
+  /** El proyecto tiene comprobación automática: el último paso es aprobarla. */
+  comprobado?: boolean;
 }) {
   const borradores = useBorradores();
   const portafolio = usePortafolio();
-  const entregado = !!portafolio?.some((e) => e.practicaId === practicaId);
+  const entrada = portafolio?.find((e) => e.practicaId === practicaId);
+  const entregado = !!entrada?.valida;
   const borrador = borradores?.[practicaId];
-  const escribiendo = !!(borrador?.solucion.trim() || borrador?.enlace.trim());
+  const escribiendo =
+    !!(borrador?.solucion.trim() || borrador?.enlace.trim() || Object.values(borrador?.respuestas ?? {}).some(Boolean)) ||
+    (!!entrada && !entrada.valida);
 
   const actual = entregado ? 5 : escribiendo ? 3 : 2;
   const hechos = Math.min(actual - 1, 4);
@@ -34,14 +40,32 @@ export function PasosPractica({
       detalle: actual > 2 ? "Completado" : "Estás aquí",
     },
     {
-      titulo: "Entrega tu solución",
+      titulo: comprobado ? "Entrega y comprueba tus cifras" : "Entrega tu solución",
       href: "#entrega",
       estado: actual > 3 ? "hecho" : actual === 3 ? "actual" : "pendiente",
-      detalle: actual > 3 ? "Completado" : actual === 3 ? "Borrador guardado" : "Pendiente",
+      detalle:
+        actual > 3
+          ? "Completado"
+          : entrada && !entrada.valida
+            ? entrada.resultado
+              ? `${entrada.resultado.aciertos} de ${entrada.resultado.total}: corrige y reenvía`
+              : "Falta comprobar tus cifras"
+            : actual === 3
+              ? "Borrador guardado"
+              : "Pendiente",
     },
     entregado
-      ? { titulo: "Descubre qué pasó", href: "#desenlace", estado: "hecho", detalle: "Desbloqueado" }
-      : { titulo: "Descubre qué pasó", estado: "bloqueado", detalle: "Se desbloquea al entregar" },
+      ? {
+          titulo: comprobado ? "Resultado esperado y oportunidad" : "Descubre qué pasó",
+          href: "#desenlace",
+          estado: "hecho",
+          detalle: "Desbloqueado",
+        }
+      : {
+          titulo: comprobado ? "Resultado esperado y oportunidad" : "Descubre qué pasó",
+          estado: "bloqueado",
+          detalle: comprobado ? "Se desbloquea al aprobar" : "Se desbloquea al entregar",
+        },
   ];
 
   return (

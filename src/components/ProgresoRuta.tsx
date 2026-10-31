@@ -7,7 +7,7 @@ export function ProgresoRuta({ proyectos }: { proyectos: string[] }) {
   const { usuario, portafolio } = useSesion();
   if (proyectos.length === 0) return null;
 
-  const hechos = portafolio ? proyectos.filter((id) => portafolio.some((e) => e.practicaId === id)).length : 0;
+  const hechos = portafolio ? proyectos.filter((id) => portafolio.some((e) => e.practicaId === id && e.valida)).length : 0;
   const porcentaje = Math.round((hechos / proyectos.length) * 100);
 
   return (

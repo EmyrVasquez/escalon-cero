@@ -10,7 +10,8 @@ import { ListaOportunidadesCargando } from "@/components/FilaOportunidad";
 import { ListaPracticasCargando } from "@/components/FilaPractica";
 import { PracticasRecientes } from "@/components/PracticasRecientes";
 import { etiquetaArea } from "@/lib/carreras";
-import { RUTAS } from "@/lib/rutas";
+import { obtenerPracticas } from "@/lib/practicas";
+import { RUTAS, obtenerRuta } from "@/lib/rutas";
 
 export default function Inicio() {
   return (
@@ -52,6 +53,10 @@ export default function Inicio() {
           <FichaOportunidadDestacada />
         </Suspense>
       </section>
+
+      <Suspense fallback={<div className="mx-auto mt-16 h-64 w-full max-w-6xl rounded-3xl bg-blanco" aria-hidden="true" />}>
+        <FlujoGuiado />
+      </Suspense>
 
       <section aria-labelledby="titulo-oportunidades" className="mx-auto w-full max-w-6xl px-4 pt-20 sm:px-6">
         <Suspense fallback={<ListaOportunidadesCargando filas={3} />}>
@@ -109,5 +114,57 @@ export default function Inicio() {
         </div>
       </section>
     </>
+  );
+}
+
+/**
+ * El recorrido completo en un proyecto: el que tiene comprobación automática.
+ * Es la puerta de entrada para quien prueba Escalón Cero por primera vez.
+ */
+async function FlujoGuiado() {
+  const proyectos = await obtenerPracticas().catch(() => []);
+  const proyecto = proyectos.find((p) => p.comprobacion?.length);
+  if (!proyecto) return null;
+  const ruta = obtenerRuta(proyecto.ruta);
+
+  const pasos = [
+    { titulo: "Lee el encargo", texto: "Un gerente necesita un dashboard de ventas para el directorio." },
+    { titulo: "Descarga los datos", texto: "La exportación del ERP: 9 587 ventas, con errores reales." },
+    { titulo: "Sube tu resultado", texto: "Tu dashboard y cinco cifras, que se comprueban al instante." },
+    { titulo: "Desbloquea y postula", texto: "Si apruebas, ves el resultado esperado y postulas a la empresa." },
+  ];
+
+  return (
+    <section aria-labelledby="titulo-guiado" className="mx-auto w-full max-w-6xl px-4 pt-16 sm:px-6">
+      <div className="rounded-3xl border border-linea bg-blanco p-6 sm:p-10">
+        <p className="text-sm font-bold text-cobalto">
+          Pruébalo ahora{ruta ? ` · Ruta ${ruta.puesto}` : ""}
+        </p>
+        <h2 id="titulo-guiado" className="mt-2 max-w-3xl text-2xl font-bold tracking-[-0.03em] sm:text-3xl">
+          {proyecto.titulo}
+        </h2>
+        <p className="mt-3 max-w-[62ch] leading-relaxed text-pizarra">
+          Del encargo a la postulación en un solo proyecto. {proyecto.duracion ? `Te toma ${proyecto.duracion}` : ""}
+          {proyecto.herramientas.length > 0 ? ` con ${proyecto.herramientas.join(" o ")}.` : "."}
+        </p>
+        <ol className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {pasos.map((paso, i) => (
+            <li key={paso.titulo} className="rounded-2xl bg-niebla p-5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cobalto text-sm font-bold text-blanco">
+                {i + 1}
+              </span>
+              <p className="mt-3 font-bold">{paso.titulo}</p>
+              <p className="mt-1 text-sm leading-relaxed text-pizarra">{paso.texto}</p>
+            </li>
+          ))}
+        </ol>
+        <Link
+          href={`/proyectos/${proyecto.id}`}
+          className="mt-8 inline-flex items-center justify-center rounded-xl bg-cobalto px-6 py-3.5 font-bold text-blanco transition-colors hover:bg-cobalto-hondo"
+        >
+          Empezar el proyecto
+        </Link>
+      </div>
+    </section>
   );
 }

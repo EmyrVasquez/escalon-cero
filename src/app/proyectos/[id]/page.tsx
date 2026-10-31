@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { EntregaComprobada } from "@/components/EntregaComprobada";
 import { EtiquetaVeracidad } from "@/components/EtiquetaVeracidad";
 import { IconoArchivo, IconoCheck, IconoMoneda, IconoNivel, IconoReloj } from "@/components/Iconos";
 import { PasosPractica } from "@/components/PasosPractica";
@@ -170,7 +171,11 @@ async function ContenidoPractica({ params }: { params: Promise<{ id: string }> }
               </ul>
             </section>
           )}
-          <PasosPractica practicaId={practica.id} conRecursos={recursos.length > 0} />
+          <PasosPractica
+            practicaId={practica.id}
+            conRecursos={recursos.length > 0}
+            comprobado={!!practica.comprobacion?.length}
+          />
           {practica.entregables.length > 0 && (
             <section className="rounded-2xl border border-linea bg-blanco p-6">
               <h2 className="font-bold">Tu entrega debe incluir</h2>
@@ -202,7 +207,11 @@ async function ContenidoPractica({ params }: { params: Promise<{ id: string }> }
         </aside>
       </div>
 
-      <PracticaInteractiva practica={practica} oportunidades={puertas} />
+      {practica.comprobacion?.length ? (
+        <EntregaComprobada practica={practica} preguntas={practica.comprobacion} oportunidades={puertas} />
+      ) : (
+        <PracticaInteractiva practica={practica} oportunidades={puertas} />
+      )}
     </article>
   );
 }

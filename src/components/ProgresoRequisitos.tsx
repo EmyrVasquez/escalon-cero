@@ -19,7 +19,7 @@ export function ProgresoRequisitos({ requeridas }: { requeridas: string[] }) {
     );
   }
 
-  const hechas = requeridas.filter((id) => portafolio.some((e) => e.practicaId === id)).length;
+  const hechas = requeridas.filter((id) => portafolio.some((e) => e.practicaId === id && e.valida)).length;
   if (hechas === requeridas.length) {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-lima px-2.5 py-0.5 text-sm font-bold text-tinta">

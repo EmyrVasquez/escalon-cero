@@ -86,6 +86,7 @@ supabase/
   migracion-003-recursos.sql   Herramientas, requisitos, recursos y la práctica de Power BI
   migracion-004-oportunidades.sql  Oportunidades, postulaciones y oportunidades de ejemplo
   migracion-005-cuentas-y-rutas.sql  Rutas y etapas, requisitos por rol, entregas y borradores por usuario
+  migracion-006-flujo-comprobado.sql Comprobación automática de cifras, archivos de entrega y desbloqueo validado
 public/recursos/            Archivos ficticios que se descargan desde los proyectos
 ```
 
@@ -100,7 +101,11 @@ npm run dev
 ```
 
 Variables de entorno requeridas: `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql`, `supabase/migracion-003-recursos.sql`, `supabase/migracion-004-oportunidades.sql` y `supabase/migracion-005-cuentas-y-rutas.sql`. En Authentication → Sign In / Providers → Email, desactiva «Confirm email» para que el registro sea inmediato.
+La base de datos se crea ejecutando, en orden, `supabase/schema.sql`, `supabase/migracion-002-practicas.sql`, `supabase/migracion-003-recursos.sql`, `supabase/migracion-004-oportunidades.sql` `supabase/migracion-005-cuentas-y-rutas.sql` y `supabase/migracion-006-flujo-comprobado.sql`. En Authentication → Sign In / Providers → Email, deja activado el proveedor Email y desactiva «Confirm email» para que el registro sea inmediato.
+
+### Flujo completo de prueba
+
+El proyecto «Arma un dashboard de ventas en Power BI para gerencia» tiene comprobación automática: la persona descarga los datos, sube su dashboard (captura, PDF o .pbix) y responde cinco cifras. La función `comprobar_entrega` las corrige en la base de datos (las respuestas correctas están en `claves_comprobacion`, que la web no puede leer). Con 4 de 5 aciertos la entrega queda aprobada, se muestra el resultado esperado y se desbloquea la oportunidad «Dashboard de ventas en Power BI para una distribuidora». La imagen de referencia `public/recursos/dashboard-ventas-power-bi/dashboard_esperado.png` se generó con los mismos datos.
 
 ## Equipo
 

@@ -21,7 +21,7 @@ export function MapaRuta({ etapas, puesto }: { etapas: NodoEtapa[]; puesto: stri
 
   function estado(e: NodoEtapa): Estado {
     if (e.proyectos.length === 0) return "sin-proyectos";
-    const hechos = e.proyectos.filter((id) => portafolio?.some((x) => x.practicaId === id)).length;
+    const hechos = e.proyectos.filter((id) => portafolio?.some((x) => x.practicaId === id && x.valida)).length;
     if (hechos === e.proyectos.length) return "completa";
     return hechos > 0 ? "en-curso" : "pendiente";
   }

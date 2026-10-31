@@ -33,6 +33,43 @@ export interface PracticaResumen {
   ruta: string | null;
   /** Etapa de la ruta, de 1 a 3. */
   etapa: number | null;
+  /**
+   * Preguntas con cifras que se comprueban al entregar. Si existe, el proyecto
+   * solo cuenta como requisito cuando la entrega queda aprobada.
+   */
+  comprobacion: PreguntaComprobacion[] | null;
+}
+
+/** Pregunta pública de la comprobación; la respuesta correcta vive en la base de datos. */
+export interface PreguntaComprobacion {
+  id: string;
+  enunciado: string;
+  tipo: "numero" | "opcion";
+  unidad?: string;
+  ayuda?: string;
+  opciones?: { valor: string; etiqueta: string }[];
+}
+
+/** Resultado de una pregunta tras comprobar la entrega. */
+export interface ResultadoPregunta {
+  id: string;
+  respuesta: string;
+  correcta: boolean;
+  /** Qué revisar, solo si la respuesta no es correcta. */
+  pista: string | null;
+  /** Respuesta correcta y su explicación: solo llegan cuando la entrega se aprueba. */
+  esperado?: string;
+  explicacion?: string;
+}
+
+/** Lo que devuelve la función `comprobar_entrega` de Supabase. */
+export interface ResultadoComprobacion {
+  aprobada: boolean;
+  aciertos: number;
+  total: number;
+  minimo: number;
+  intentos: number;
+  detalle: ResultadoPregunta[];
 }
 
 /** Práctica completa, incluido el desenlace real. */

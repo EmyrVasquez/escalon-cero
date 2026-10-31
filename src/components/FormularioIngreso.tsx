@@ -8,17 +8,52 @@ import { supabase } from "@/lib/supabase";
 
 type Modo = "ingresar" | "registro";
 
+/** Traduce los errores de Supabase Auth a un mensaje que la persona pueda resolver. */
+function mensajeError(mensaje: string, modo: Modo): string {
+  const m = mensaje.toLowerCase();
+  if (m.includes("already registered") || m.includes("already been registered"))
+    return "Ese correo ya tiene una cuenta. Ingresa con tu contraseña.";
+  if (m.includes("invalid login credentials")) return "El correo o la contraseña no coinciden.";
+  if (m.includes("email not confirmed"))
+    return "Tu cuenta todavía no está confirmada. Revisa tu correo y abre el enlace de confirmación.";
+  if (m.includes("signups not allowed") || m.includes("signup is disabled") || m.includes("email logins are disabled") || m.includes("provider is not enabled"))
+    return "El registro con correo está desactivado en este momento. Avísale al equipo de Escalón Cero.";
+  if (m.includes("rate limit") || m.includes("too many"))
+    return "Hubo demasiados intentos seguidos. Espera un minuto y vuelve a intentarlo.";
+  if (m.includes("password")) return "La contraseña es muy débil. Usa al menos 6 caracteres, con letras y números.";
+  if (m.includes("email") && m.includes("invalid")) return "Ese correo no es válido. Revisa cómo lo escribiste.";
+  if (m.includes("fetch") || m.includes("network")) return "No hay conexión con el servidor. Revisa tu internet y vuelve a intentarlo.";
+  return modo === "registro"
+    ? `No pudimos crear tu cuenta (${mensaje}). Inténtalo de nuevo.`
+    : `No pudimos ingresar (${mensaje}). Inténtalo de nuevo.`;
+}
+
 /** Solo se vuelve a rutas internas, para no redirigir a otro sitio. */
 function destinoSeguro(valor: string | null): string {
   return valor && valor.startsWith("/") && !valor.startsWith("//") ? valor : "/";
 }
 
-export function FormularioIngreso() {
+/**
+ * Ingreso y registro. Con `enLinea`, se muestra dentro de otra página (por
+ * ejemplo, al entregar un proyecto) y no redirige: quien lo usa sigue donde estaba.
+ */
+export function FormularioIngreso({
+  enLinea = false,
+  titulo,
+  texto,
+  alIngresar,
+}: {
+  enLinea?: boolean;
+  titulo?: string;
+  texto?: string;
+  /** Solo con `enLinea`: se llama apenas la sesión queda abierta. */
+  alIngresar?: () => void;
+} = {}) {
   const parametros = useSearchParams();
   const router = useRouter();
   const { usuario, nombre: nombreSesion, cerrarSesion } = useSesion();
   const volver = destinoSeguro(parametros.get("volver"));
-  const [modo, setModo] = useState<Modo>(parametros.get("modo") === "registro" ? "registro" : "ingresar");
+  const [modo, setModo] = useState<Modo>(enLinea || parametros.get("modo") === "registro" ? "registro" : "ingresar");
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
@@ -29,10 +64,10 @@ export function FormularioIngreso() {
   const id = useId();
 
   useEffect(() => {
-    if (recienIngreso && usuario) router.replace(volver);
-  }, [recienIngreso, usuario, router, volver]);
+    if (recienIngreso && usuario && !enLinea) router.replace(volver);
+  }, [recienIngreso, usuario, router, volver, enLinea]);
 
-  if (usuario && !recienIngreso) {
+  if (usuario && !recienIngreso && !enLinea) {
     return (
       <div className="rounded-3xl border border-linea bg-blanco p-6 sm:p-8">
         <h2 className="text-2xl font-bold tracking-[-0.03em]">Ya ingresaste como {nombreSesion}</h2>
@@ -72,7 +107,10 @@ export function FormularioIngreso() {
         options: { data: { nombre: nombre.trim() } },
       });
       setEnviando(false);
-      if (e) return setError(e.message.includes("registered") ? "Ese correo ya tiene una cuenta. Ingresa con tu contraseña." : "No pudimos crear tu cuenta. Inténtalo de nuevo.");
+      if (e) {
+        console.error("Registro:", e.message);
+        return setError(mensajeError(e.message, "registro"));
+      }
       if (!data.session) {
         setAviso("Te enviamos un correo para confirmar tu cuenta. Después de confirmarla, ingresa aquí.");
         setModo("ingresar");
@@ -81,7 +119,14 @@ export function FormularioIngreso() {
     } else {
       const { error: e } = await supabase.auth.signInWithPassword({ email: correo.trim(), password: clave });
       setEnviando(false);
-      if (e) return setError("El correo o la contraseña no coinciden.");
+      if (e) {
+        console.error("Ingreso:", e.message);
+        return setError(mensajeError(e.message, "ingresar"));
+      }
+    }
+    if (enLinea) {
+      alIngresar?.();
+      return;
     }
     setRecienIngreso(true);
   }
@@ -91,6 +136,9 @@ export function FormularioIngreso() {
 
   return (
     <form onSubmit={enviar} noValidate className="rounded-3xl border border-linea bg-blanco p-6 sm:p-8">
+      {titulo && <h2 className="text-2xl font-bold tracking-[-0.03em]">{titulo}</h2>}
+      {texto && <p className="mt-2 max-w-[60ch] leading-relaxed text-pizarra">{texto}</p>}
+      {(titulo || texto) && <div className="mb-6" />}
       <div role="tablist" aria-label="Tipo de acceso" className="grid grid-cols-2 gap-1 rounded-xl bg-niebla p-1 text-sm font-bold">
         {(["ingresar", "registro"] as const).map((m) => (
           <button

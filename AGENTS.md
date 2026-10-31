@@ -104,7 +104,8 @@ Para agregar un área: sumarla a `AREAS` con su `familia`. El menú Explorar y l
 - Supabase con `@supabase/supabase-js`; el cliente está en `src/lib/supabase.ts`
 - Lecturas del servidor en `src/lib/practicas.ts` y `src/lib/oportunidades.ts`; tipos y etiquetas en `src/lib/tipos.ts`
 - Progreso del estudiante en su cuenta: `src/lib/sesion.tsx`. En el navegador solo quedan las reacciones propias (`src/lib/almacenamiento.ts`)
-- Esquema: `supabase/schema.sql`, luego `migracion-002-practicas.sql`, `migracion-003-recursos.sql`, `migracion-004-oportunidades.sql` y `migracion-005-cuentas-y-rutas.sql`
+- Esquema: `supabase/schema.sql`, luego `migracion-002-practicas.sql`, `migracion-003-recursos.sql`, `migracion-004-oportunidades.sql`, `migracion-005-cuentas-y-rutas.sql` y `migracion-006-flujo-comprobado.sql`
+- Proyectos con comprobación (`casos.comprobacion`): la entrega se hace con la función `comprobar_entrega` y solo cuenta como requisito si queda aprobada (`entregas.aprobada`). Las respuestas correctas van en `claves_comprobacion`, nunca en el código del frontend
 - Deploy en Vercel: cada push a `main` se publica solo
 
 ### Reglas de código
