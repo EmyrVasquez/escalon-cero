@@ -136,8 +136,9 @@ export default function Inicio() {
             </Link>
           </div>
           <div className="rounded-2xl bg-blanco p-5 text-tinta">
-            <p className="text-xs font-bold text-pizarra">Postulación recibida · ejemplo</p>
-            <p className="mt-2 font-extrabold">Andrea Torres · Ing. Informática, 8.º ciclo</p>
+            <p className="text-xs font-bold text-pizarra">Ejemplo de postulación recibida</p>
+            <p className="mt-2 font-extrabold">Andrea Torres</p>
+            <p className="text-sm text-pizarra">Ingeniería Informática, 8.º ciclo</p>
             <div className="mt-3 flex items-center gap-3 rounded-xl bg-lima-suave p-3">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-lima font-bold">✓</span>
               <p className="text-sm leading-snug">

@@ -177,7 +177,7 @@ function PanelExplorar({
         <span className="text-pizarra">
           {plural(menu.total, "proyecto", "proyectos")} en{" "}
           {plural(menu.areasConProyectos, "área", "áreas")}
-          {menu.areasEnCamino > 0 && ` · ${plural(menu.areasEnCamino, "área más", "áreas más")} en camino`}
+          {menu.areasEnCamino > 0 && `, y ${plural(menu.areasEnCamino, "área más", "áreas más")} en camino`}
         </span>
         <Link href="/proyectos" onClick={alElegir} className="font-bold text-cobalto hover:underline">
           Ver todos los proyectos

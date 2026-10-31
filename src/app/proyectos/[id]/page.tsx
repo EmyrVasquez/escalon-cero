@@ -12,7 +12,7 @@ import { oportunidadesQuePiden } from "@/lib/oportunidades";
 import { obtenerRuta } from "@/lib/rutas";
 import { obtenerProyecto } from "@/lib/proyectos";
 import { enFrase, plural } from "@/lib/texto";
-import { ETIQUETAS_NIVEL, ETIQUETAS_TIPO_OPORTUNIDAD } from "@/lib/tipos";
+import { ETIQUETAS_NIVEL } from "@/lib/tipos";
 
 export default function PaginaProyecto({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -65,7 +65,6 @@ async function ContenidoProyecto({ params }: { params: Promise<{ id: string }> }
             className="mb-4 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-linea bg-blanco px-3 py-1.5 text-sm hover:border-cobalto"
           >
             <span className="font-semibold text-pizarra">Ruta {ruta.puesto}</span>
-            <span aria-hidden="true" className="text-pizarra">·</span>
             <span className="font-bold text-cobalto">
               Etapa {etapa.numero}: {etapa.titulo}
             </span>
@@ -201,7 +200,7 @@ async function ContenidoProyecto({ params }: { params: Promise<{ id: string }> }
                   <li key={o.id}>
                     <Link href={`/oportunidades/${o.id}`} className="group block">
                       <span className="text-xs font-semibold opacity-75">
-                        {ETIQUETAS_TIPO_OPORTUNIDAD[o.tipo]} · {o.empresa}
+                        {o.empresa}
                       </span>
                       <span className="mt-0.5 block font-bold leading-snug group-hover:underline">{o.titulo}</span>
                       <span className="mt-1 inline-flex items-center gap-1.5 text-sm">

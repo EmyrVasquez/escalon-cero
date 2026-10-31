@@ -49,7 +49,7 @@ async function Contenido({ params }: { params: Promise<{ id: string }> }) {
           <p className="text-sm font-bold text-cobalto">Postulación{aviso ? ` a «${aviso.titulo}»` : ""}</p>
           <h1 className="text-4xl font-extrabold tracking-[-0.045em]">{p.nombre}</h1>
           <p className="mt-1 text-pizarra">
-            {p.perfil} · enviada el {fechaLarga(p.enviada)}
+            {p.perfil}. Postuló el {fechaLarga(p.enviada)}.
           </p>
         </div>
       </header>
@@ -121,7 +121,7 @@ async function Contenido({ params }: { params: Promise<{ id: string }> }) {
               <p className="flex items-center gap-2 border-t border-linea bg-niebla px-4 py-3 text-sm">
                 <IconoArchivo />
                 <span className="font-bold">{p.archivo}</span>
-                <span className="text-pizarra">· vista previa de ejemplo</span>
+                <span className="text-pizarra">(vista previa de ejemplo)</span>
               </p>
             </div>
           </section>

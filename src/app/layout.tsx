@@ -14,8 +14,8 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Escalón Cero — Gana experiencia antes de tu primer empleo",
-    template: "%s · Escalón Cero",
+    default: "Escalón Cero: gana experiencia antes de tu primer empleo",
+    template: "%s | Escalón Cero",
   },
   description:
     "Experiencia real con empresas para personas sin experiencia: sigue una ruta, haz los proyectos que piden y postula con tu portafolio.",

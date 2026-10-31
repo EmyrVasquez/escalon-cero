@@ -102,7 +102,7 @@ export function EspacioEstudiante({ rutas, oportunidades }: { rutas: RutaEspacio
 
   return (
     <>
-      <p className="text-sm font-bold text-cobalto">{esDemo ? "Tu espacio · cuenta de ejemplo" : "Tu espacio"}</p>
+      <p className="text-sm font-bold text-cobalto">{esDemo ? "Tu espacio (cuenta de ejemplo)" : "Tu espacio"}</p>
       <h1 className="mt-1 text-4xl font-extrabold tracking-[-0.045em] sm:text-5xl">Hola, {primerNombre}.</h1>
 
       <div className="mt-8 grid gap-4 lg:grid-cols-[1.4fr_1fr]">

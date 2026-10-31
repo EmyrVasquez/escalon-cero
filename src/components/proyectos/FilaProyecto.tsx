@@ -27,7 +27,7 @@ export function FilaProyecto({
           <span className="font-semibold text-tinta">{p.rol}</span>
           <span>{ETIQUETAS_NIVEL[p.nivel]}</span>
           {p.duracion && <span>{p.duracion}</span>}
-          {p.herramientas.length > 0 && <span>{p.herramientas.join(" · ")}</span>}
+          {p.herramientas.length > 0 && <span>{p.herramientas.join(", ")}</span>}
           <EtiquetaVeracidad tipo={p.tipo_veracidad} validado={p.validado_empresa} />
         </div>
       </div>

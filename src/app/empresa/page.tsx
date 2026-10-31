@@ -18,7 +18,7 @@ export default function Empresa() {
     <div className="mx-auto w-full max-w-6xl px-4 pt-10 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p className="text-sm font-bold text-cobalto">Tu espacio de empresa · {EMPRESA_DEMO.nombre}</p>
+          <p className="text-sm font-bold text-cobalto">{EMPRESA_DEMO.nombre}</p>
           <h1 className="mt-1 text-4xl font-extrabold tracking-[-0.045em] sm:text-5xl">Avisos y postulaciones</h1>
         </div>
         <Link
@@ -64,7 +64,7 @@ export default function Empresa() {
                 </span>
                 <span className="flex flex-[1_1_16rem] flex-wrap items-center gap-2 text-sm">
                   <span className="rounded-full bg-lima-suave px-3 py-1 font-bold text-lima-hondo">
-                    Proyecto aprobado · {p.aciertos} de {p.total}
+                    Aprobó con {p.aciertos} de {p.total}
                   </span>
                   <span className="text-pizarra">{fechaLarga(p.enviada)}</span>
                 </span>
@@ -102,9 +102,9 @@ async function MisAvisos() {
               </div>
               <h3 className="mt-2 text-xl font-extrabold tracking-[-0.02em]">{o.titulo}</h3>
               <p className="mt-1 text-sm text-pizarra">
-                {ruta ? `Pide: ruta ${ruta.puesto} hasta la etapa ${o.etapa_requerida}` : "Sin ruta requerida"} ·{" "}
-                {POSTULANTES_DEMO.length} postulaciones
+                {ruta ? `Pide la ruta ${ruta.puesto} hasta la etapa ${o.etapa_requerida}.` : "Sin ruta requerida."}
               </p>
+              <p className="mt-0.5 text-sm font-bold">{POSTULANTES_DEMO.length} postulaciones recibidas</p>
             </div>
             <div className="flex flex-col items-start gap-2 text-sm">
               {o.cierra && (

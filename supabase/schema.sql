@@ -1,4 +1,4 @@
--- Escalón Cero · estructura de la base de datos (Supabase / Postgres)
+-- Escalón Cero: estructura de la base de datos (Supabase / Postgres)
 --
 -- Este archivo crea todo desde cero: tablas, reglas de acceso (RLS),
 -- funciones y el bucket de archivos. Los datos de ejemplo están en seed.sql.

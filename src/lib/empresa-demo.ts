@@ -49,7 +49,7 @@ export const POSTULANTES_DEMO: readonly PostulanteDemo[] = [
   {
     id: "andrea-torres",
     nombre: "Andrea Torres",
-    perfil: "Ingeniería Informática · 8.º ciclo",
+    perfil: "Ingeniería Informática, 8.º ciclo",
     correo: "andrea.torres@ejemplo.pe",
     enviada: "2026-10-30",
     estado: "nueva",
@@ -66,7 +66,7 @@ export const POSTULANTES_DEMO: readonly PostulanteDemo[] = [
   {
     id: "diego-paredes",
     nombre: "Diego Paredes",
-    perfil: "Ingeniería Industrial · egresado 2026",
+    perfil: "Ingeniería Industrial, egresado en 2026",
     correo: "diego.paredes@ejemplo.pe",
     enviada: "2026-10-29",
     estado: "en_revision",
@@ -82,7 +82,7 @@ export const POSTULANTES_DEMO: readonly PostulanteDemo[] = [
   {
     id: "valeria-chavez",
     nombre: "Valeria Chávez",
-    perfil: "Ingeniería de Sistemas · 9.º ciclo",
+    perfil: "Ingeniería de Sistemas, 9.º ciclo",
     correo: "valeria.chavez@ejemplo.pe",
     enviada: "2026-10-28",
     estado: "seleccionada",

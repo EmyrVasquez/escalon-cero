@@ -54,10 +54,8 @@ async function ContenidoOportunidad({ params }: { params: Promise<{ id: string }
       <header className="mt-6 max-w-3xl">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <EtiquetaTipo tipo={oportunidad.tipo} />
-          <span className="font-semibold">
-            {oportunidad.empresa}
-            {oportunidad.sector ? <span className="font-normal text-pizarra"> · {oportunidad.sector}</span> : null}
-          </span>
+          <span className="font-semibold">{oportunidad.empresa}</span>
+          {oportunidad.sector ? <span className="text-pizarra">{oportunidad.sector}</span> : null}
         </div>
         <h1 className="mt-3 text-[2.2rem] font-extrabold leading-[1.08] tracking-[-0.045em] sm:text-5xl">
           {oportunidad.titulo}
@@ -117,7 +115,7 @@ async function ContenidoOportunidad({ params }: { params: Promise<{ id: string }
             </Dato>
             <Dato icono={<IconoLugar />} titulo="Modalidad">
               {ETIQUETAS_MODALIDAD[oportunidad.modalidad]}
-              {oportunidad.ubicacion ? ` · ${oportunidad.ubicacion}` : ""}
+              {oportunidad.ubicacion ? `, ${oportunidad.ubicacion}` : ""}
             </Dato>
             {oportunidad.dedicacion && (
               <Dato icono={<IconoCalendario />} titulo="Dedicación">

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSesion } from "@/lib/sesion";
 import { AvisoSesion } from "@/components/cuenta/AvisoSesion";
-import { ETIQUETAS_TIPO_OPORTUNIDAD, type TipoOportunidad } from "@/lib/tipos";
 
 const FECHA = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "long" });
 
@@ -53,12 +52,12 @@ export function PostulacionesVista() {
           >
             <div className="min-w-0 flex-[1_1_20rem]">
               <p className="text-sm font-semibold text-cobalto">
-                {ETIQUETAS_TIPO_OPORTUNIDAD[p.tipo as TipoOportunidad] ?? "Oportunidad"} · {p.empresa}
+                {p.empresa}
               </p>
               <p className="mt-1 text-lg font-bold leading-snug tracking-[-0.02em]">{p.titulo}</p>
               <p className="mt-1.5 text-sm text-pizarra">
                 {p.compensacion}
-                {p.proyectos.length > 0 && ` · Adjuntaste: ${p.proyectos.join(", ")}`}
+                {p.proyectos.length > 0 && <span className="mt-0.5 block">Adjuntaste: {p.proyectos.join(", ")}</span>}
               </p>
             </div>
             <div className="text-sm">

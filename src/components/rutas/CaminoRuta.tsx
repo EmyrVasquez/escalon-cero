@@ -89,9 +89,10 @@ export function CaminoRuta({
                 >
                   <Nodo estado={estado} numero={e.numero} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold uppercase tracking-[0.06em] text-pizarra">
+                    <p className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-[0.06em] text-pizarra">
                       Etapa {e.numero}
-                      {estado === "hecha" ? " · completa" : estado === "actual" ? " · estás aquí" : ""}
+                      {estado === "hecha" && <span className="rounded-full bg-cielo px-2 py-0.5 normal-case tracking-normal text-cobalto">Completa</span>}
+                      {estado === "actual" && <span className="rounded-full bg-cobalto px-2 py-0.5 normal-case tracking-normal text-blanco">Estás aquí</span>}
                     </p>
                     <p className="mt-0.5 text-lg font-extrabold leading-snug tracking-[-0.02em]">{e.titulo}</p>
                     {proyecto ? (
@@ -158,7 +159,7 @@ export function CaminoRuta({
               <p className="mt-2 text-xl font-extrabold leading-snug">{actual.proyectos[0].titulo}</p>
               <p className="mt-1 text-sm opacity-80">
                 Etapa {actual.numero}
-                {actual.proyectos[0].duracion ? ` · ${actual.proyectos[0].duracion}` : ""}
+                {actual.proyectos[0].duracion ? `, ${actual.proyectos[0].duracion}` : ""}
               </p>
               <Link
                 href={`/proyectos/${actual.proyectos[0].id}`}
@@ -201,10 +202,10 @@ export function CaminoRuta({
                       </span>
                       <span className="min-w-0">
                         <span className="block text-xs font-semibold text-pizarra">
-                          {o.empresa} · pide la etapa {o.etapa_requerida}
-                          {abierta ? " · ya puedes postular" : ""}
+                          {o.empresa} pide la etapa {o.etapa_requerida}
                         </span>
                         <span className="block font-bold leading-snug group-hover:text-cobalto">{o.titulo}</span>
+                        {abierta && <span className="mt-0.5 block text-xs font-bold text-lima-hondo">Ya puedes postular</span>}
                       </span>
                     </Link>
                   </li>

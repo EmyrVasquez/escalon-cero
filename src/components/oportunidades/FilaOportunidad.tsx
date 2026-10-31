@@ -44,7 +44,7 @@ export function FilaOportunidad({
           <span className="inline-flex items-center gap-1.5 text-pizarra">
             <IconoLugar className="h-4 w-4" />
             {ETIQUETAS_MODALIDAD[o.modalidad]}
-            {o.ubicacion ? ` · ${o.ubicacion}` : ""}
+            {o.ubicacion ? `, ${o.ubicacion}` : ""}
           </span>
           {cerrada ? (
             <span className="font-semibold text-pizarra">Cerrada</span>

@@ -1,4 +1,4 @@
--- Escalón Cero · datos iniciales
+-- Escalón Cero: datos iniciales
 --
 -- Los cinco proyectos (uno por ruta), las cinco oportunidades de ejemplo y
 -- las respuestas correctas del proyecto de Power BI. Se corre después de
@@ -10,7 +10,7 @@
 -- ============================================================
 -- Proyectos
 -- ============================================================
--- Arma un dashboard de ventas en Power BI para gerencia · ruta desarrollador-erp-junior, etapa 1
+-- Arma un dashboard de ventas en Power BI para gerencia, ruta desarrollador-erp-junior, etapa 1
 insert into public.casos (id, titulo, ruta, etapa, carrera, rol, sector, resumen, nivel, duracion, herramientas, requisitos, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, recursos, referencia, enlace_obligatorio, comprobacion, lo_que_hice, que_paso, aprendizaje, tipo_veracidad, validado_empresa, autor_alias, destacada, estado)
 select
   '5ce9031f-688d-4566-bb71-c40d45dcb2d6'::uuid as id,
@@ -189,7 +189,7 @@ select
   'aprobado' as estado
 on conflict (id) do nothing;
 
--- Las cifras no cuadran la noche antes de la reunión · ruta analista-junior-de-datos, etapa 1
+-- Las cifras no cuadran la noche antes de la reunión, ruta analista-junior-de-datos, etapa 1
 insert into public.casos (id, titulo, ruta, etapa, carrera, rol, sector, resumen, nivel, duracion, herramientas, requisitos, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, recursos, referencia, enlace_obligatorio, comprobacion, lo_que_hice, que_paso, aprendizaje, tipo_veracidad, validado_empresa, autor_alias, destacada, estado)
 select
   '7011eae7-706e-4a69-abcc-12911a45e89b'::uuid as id,
@@ -240,7 +240,7 @@ select
   'aprobado' as estado
 on conflict (id) do nothing;
 
--- Prepara una campaña de Instagram para una panadería · ruta asistente-de-marketing-digital, etapa 1
+-- Prepara una campaña de Instagram para una panadería, ruta asistente-de-marketing-digital, etapa 1
 insert into public.casos (id, titulo, ruta, etapa, carrera, rol, sector, resumen, nivel, duracion, herramientas, requisitos, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, recursos, referencia, enlace_obligatorio, comprobacion, lo_que_hice, que_paso, aprendizaje, tipo_veracidad, validado_empresa, autor_alias, destacada, estado)
 select
   '671db227-eb41-4935-be62-3eff0c36bab5'::uuid as id,
@@ -293,7 +293,7 @@ select
   'aprobado' as estado
 on conflict (id) do nothing;
 
--- Revisa veinte banners generados con IA antes de entregarlos · ruta disenador-grafico-junior, etapa 1
+-- Revisa veinte banners generados con IA antes de entregarlos, ruta disenador-grafico-junior, etapa 1
 insert into public.casos (id, titulo, ruta, etapa, carrera, rol, sector, resumen, nivel, duracion, herramientas, requisitos, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, recursos, referencia, enlace_obligatorio, comprobacion, lo_que_hice, que_paso, aprendizaje, tipo_veracidad, validado_empresa, autor_alias, destacada, estado)
 select
   '60a15f25-35a4-4385-890d-4a5030765bbe'::uuid as id,
@@ -344,7 +344,7 @@ select
   'aprobado' as estado
 on conflict (id) do nothing;
 
--- Prueba el proceso de compra de una tienda online · ruta qa-junior, etapa 1
+-- Prueba el proceso de compra de una tienda online, ruta qa-junior, etapa 1
 insert into public.casos (id, titulo, ruta, etapa, carrera, rol, sector, resumen, nivel, duracion, herramientas, requisitos, contexto, encargo, complicacion, pregunta, materiales, habilidades, entregables, criterios, recursos, referencia, enlace_obligatorio, comprobacion, lo_que_hice, que_paso, aprendizaje, tipo_veracidad, validado_empresa, autor_alias, destacada, estado)
 select
   'b27bbbe5-1d44-4027-bf07-16c3300cb44d'::uuid as id,
@@ -400,7 +400,7 @@ on conflict (id) do nothing;
 -- ============================================================
 -- Oportunidades de ejemplo
 -- ============================================================
--- Distribuidora Ruta Sur · experiencia_empresa
+-- Distribuidora Ruta Sur, experiencia_empresa
 insert into public.oportunidades (id, titulo, empresa, sector, tipo, carrera, rol, ruta, etapa_requerida, resumen, descripcion, que_haras, requisitos, compensacion, modalidad, ubicacion, dedicacion, cupos, cierra, es_ejemplo, destacada, estado)
 select
   '5445520e-1e7e-407f-8c8b-e4af554d98d7'::uuid as id,
@@ -426,7 +426,7 @@ select
   'Constancia de la empresa, carta de recomendación y un caso real para tu portafolio' as compensacion,
   'remoto' as modalidad,
   'Lima' as ubicacion,
-  '2 semanas · unas 15 horas en total' as dedicacion,
+  '2 semanas, unas 15 horas en total' as dedicacion,
   1 as cupos,
   date '2026-11-20' as cierra,
   true as es_ejemplo,
@@ -434,7 +434,7 @@ select
   'abierta' as estado
 on conflict (id) do nothing;
 
--- Panadería La Espiga · experiencia_empresa
+-- Panadería La Espiga, experiencia_empresa
 insert into public.oportunidades (id, titulo, empresa, sector, tipo, carrera, rol, ruta, etapa_requerida, resumen, descripcion, que_haras, requisitos, compensacion, modalidad, ubicacion, dedicacion, cupos, cierra, es_ejemplo, destacada, estado)
 select
   'e2904ed0-4f45-4820-99b0-0bef32163912'::uuid as id,
@@ -459,7 +459,7 @@ select
   'Constancia de la empresa, carta de recomendación y los resultados de la campaña para tu portafolio' as compensacion,
   'hibrido' as modalidad,
   'San Martín de Porres' as ubicacion,
-  '1 mes · unas 6 horas por semana' as dedicacion,
+  '1 mes, unas 6 horas por semana' as dedicacion,
   1 as cupos,
   date '2026-11-25' as cierra,
   true as es_ejemplo,
@@ -467,7 +467,7 @@ select
   'abierta' as estado
 on conflict (id) do nothing;
 
--- Boticas Salud Norte · experiencia_empresa
+-- Boticas Salud Norte, experiencia_empresa
 insert into public.oportunidades (id, titulo, empresa, sector, tipo, carrera, rol, ruta, etapa_requerida, resumen, descripcion, que_haras, requisitos, compensacion, modalidad, ubicacion, dedicacion, cupos, cierra, es_ejemplo, destacada, estado)
 select
   '5f01e08d-4844-47bc-82a2-746ad0a83c08'::uuid as id,
@@ -493,7 +493,7 @@ select
   'Constancia de la empresa, carta de recomendación y un caso real para tu portafolio' as compensacion,
   'remoto' as modalidad,
   null as ubicacion,
-  '3 semanas · unas 8 horas por semana' as dedicacion,
+  '3 semanas, unas 8 horas por semana' as dedicacion,
   2 as cupos,
   date '2026-11-30' as cierra,
   true as es_ejemplo,
@@ -501,7 +501,7 @@ select
   'abierta' as estado
 on conflict (id) do nothing;
 
--- Estudio Qori · reto_con_premio
+-- Estudio Qori, reto_con_premio
 insert into public.oportunidades (id, titulo, empresa, sector, tipo, carrera, rol, ruta, etapa_requerida, resumen, descripcion, que_haras, requisitos, compensacion, modalidad, ubicacion, dedicacion, cupos, cierra, es_ejemplo, destacada, estado)
 select
   '0278faef-1820-414f-a0d9-dfff1dbb1a6c'::uuid as id,
@@ -534,7 +534,7 @@ select
   'abierta' as estado
 on conflict (id) do nothing;
 
--- Tienda Kusi · reto_con_premio
+-- Tienda Kusi, reto_con_premio
 insert into public.oportunidades (id, titulo, empresa, sector, tipo, carrera, rol, ruta, etapa_requerida, resumen, descripcion, que_haras, requisitos, compensacion, modalidad, ubicacion, dedicacion, cupos, cierra, es_ejemplo, destacada, estado)
 select
   '8dfed716-18fa-495c-a9e7-14688ed4aac0'::uuid as id,

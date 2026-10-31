@@ -155,8 +155,7 @@ export function Postulacion({
                   <p className="text-xs font-semibold text-cobalto">Etapa {proyecto.etapa}</p>
                   <p className="font-bold leading-snug">{proyecto.titulo}</p>
                   <p className="mt-0.5 text-sm text-pizarra">
-                    {proyecto.duracion ?? proyecto.rol}
-                    {entrada ? " · Aprobado" : pendiente ? " · Entregado, falta aprobar" : ""}
+                    {entrada ? "Aprobado" : pendiente ? "Entregado, falta aprobar" : (proyecto.duracion ?? proyecto.rol)}
                   </p>
                 </div>
                 <Link
